@@ -1,4 +1,4 @@
-package com.sasakirione.plugins
+package com.sasakirione.pokebuild.plugins
 
 import io.ktor.server.routing.*
 import io.ktor.http.*

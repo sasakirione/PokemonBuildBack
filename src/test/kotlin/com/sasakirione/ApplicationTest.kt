@@ -12,7 +12,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlin.test.*
 import io.ktor.server.testing.*
-import com.sasakirione.plugins.*
+import com.sasakirione.pokebuild.plugins.configureRouting
 
 class ApplicationTest {
     @Test
