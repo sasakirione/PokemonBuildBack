@@ -40,6 +40,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
 
+
 tasks.withType<Jar> {
     manifest {
         attributes(
