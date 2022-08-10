@@ -1,0 +1,11 @@
+INSERT INTO public.game_versions (id, name, gen) VALUES (1, '初代', 1);
+INSERT INTO public.game_versions (id, name, gen) VALUES (2, '金銀', 2);
+INSERT INTO public.game_versions (id, name, gen) VALUES (3, 'RSE', 3);
+INSERT INTO public.game_versions (id, name, gen) VALUES (4, 'DPt', 4);
+INSERT INTO public.game_versions (id, name, gen) VALUES (5, 'BW', 5);
+INSERT INTO public.game_versions (id, name, gen) VALUES (6, 'XY', 6);
+INSERT INTO public.game_versions (id, name, gen) VALUES (7, 'SM', 7);
+INSERT INTO public.game_versions (id, name, gen) VALUES (8, 'SW', 8);
+INSERT INTO public.game_versions (id, name, gen) VALUES (9, 'BDSP', 8);
+INSERT INTO public.game_versions (id, name, gen) VALUES (11, 'SV', 9);
+INSERT INTO public.game_versions (id, name, gen) VALUES (10, 'PLA', 8);
