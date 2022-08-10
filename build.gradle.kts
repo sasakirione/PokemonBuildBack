@@ -5,6 +5,7 @@ val logback_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.7.10"
+    id("com.github.johnrengelman.shadow") version "5.0.0"
 }
 
 group = "com.sasakirione"
@@ -37,4 +38,18 @@ dependencies {
     implementation("io.insert-koin:koin-core:3.2.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes(
+            mapOf(
+                "Main-Class" to application.mainClassName
+            )
+        )
+    }
+}
+
+tasks {
+    create("stage").dependsOn("installDist")
 }
