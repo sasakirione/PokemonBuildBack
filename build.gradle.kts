@@ -36,7 +36,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:0.38.2")
     implementation("org.jetbrains.exposed:exposed-dao:0.38.2")
     implementation("org.postgresql:postgresql:42.2.5")
-    implementation("io.insert-koin:koin-java:2.0.1")
     implementation("io.insert-koin:koin-core:3.2.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
@@ -44,8 +43,13 @@ dependencies {
 
 
 val jar by tasks.getting(Jar::class) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     manifest {
         attributes["Main-Class"] = "com.sasakirione.pokebuild.ApplicationKt"
+    }
+    configurations["runtimeClasspath"].forEach { file: File ->
+        from(zipTree(file.absoluteFile))
     }
 }
 
