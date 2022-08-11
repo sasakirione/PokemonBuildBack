@@ -58,6 +58,8 @@ fun Application.module() {
         SchemaUtils.create(Types)
         SchemaUtils.create(Users)
     }
+    routing {
 
+    }
 
 }
