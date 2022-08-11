@@ -41,16 +41,10 @@ dependencies {
 }
 
 
-tasks.withType<Jar> {
+val jar by tasks.getting(Jar::class) {
     manifest {
-        attributes(
-            mapOf(
-                "Main-Class" to application.mainClassName
-            )
-        )
+        attributes["Main-Class"] = "com.sasakirione.pokebuild.ApplicationKt"
     }
 }
 
-tasks {
-    create("stage").dependsOn("installDist")
-}
+tasks.create("stage").dependsOn("installDist")
