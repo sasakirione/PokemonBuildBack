@@ -16,4 +16,16 @@ class PokemonDataUseCase: KoinComponent {
         pokemonDataRepository.getPokemon(id)
     }
 
+    fun getGoods() = transaction {
+        pokemonDataRepository.getGoods()
+    }
+
+    fun getTags() = transaction {
+        pokemonDataRepository.getTags()
+    }
+
+    fun getMoves() = transaction {
+        pokemonDataRepository.getMoves()
+    }
+
 }

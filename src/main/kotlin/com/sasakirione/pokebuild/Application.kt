@@ -1,13 +1,14 @@
 package com.sasakirione.pokebuild
 
+import com.sasakirione.pokebuild.controller.PokemonDataController
 import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.plugins.moduleA
-import com.sasakirione.pokebuild.usecase.PokemonDataUseCase
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.locations.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.Database
@@ -35,6 +36,10 @@ fun Application.module() {
         jackson()
     }
     install(Locations)
+    install(CORS)
+    {
+        hosts += "*"
+    }
     Database.connect(
         url = getProperty("db.url") ?: "jdbc:postgresql://localhost:5432/pokemon",
         driver = "org.postgresql.Driver",
@@ -62,21 +67,30 @@ fun Application.module() {
         SchemaUtils.create(Users)
     }
     routing {
-        val pokemonDataUseCase: PokemonDataUseCase by inject()
+        val pokemonDataController: PokemonDataController by inject()
 
         route("v1") {
             route("pokemon_data") {
                 get("/{id}"){
                     val id = call.parameters["id"]?.toIntOrNull() ?:
                         return@get call.respond(HttpStatusCode.BadRequest)
-                    call.respond(pokemonDataUseCase.getPokemonData(id))
+                    call.respond(pokemonDataController.getPokemon(id))
                 }
                 route("suggest_list") {
                     get("/{input}"){
                         val input = call.parameters["input"] ?:
                             return@get call.respond(HttpStatusCode.BadRequest)
-                        call.respond(pokemonDataUseCase.getPokemonNameList(input))
+                        call.respond(pokemonDataController.getPokemonNameList(input))
                     }
+                }
+                get("get_goods"){
+                    call.respond(pokemonDataController.getGoods())
+                }
+                get("get_tags") {
+                    call.respond(pokemonDataController.getTags())
+                }
+                get("get_moves") {
+                    call.respond(pokemonDataController.getMoves())
                 }
             }
         }

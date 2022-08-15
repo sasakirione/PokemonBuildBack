@@ -3,6 +3,7 @@ package com.sasakirione.pokebuild.repository
 import com.sasakirione.pokebuild.domain.Pokemon
 import com.sasakirione.pokebuild.entity.*
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 
 class PokemonDataRepository: IPokemonDataRepository {
     override fun getPokemonNameList(input: String): List<String> =
@@ -35,4 +36,13 @@ class PokemonDataRepository: IPokemonDataRepository {
             abilities = pokemonAbility,
         )
     }
+
+    override fun getGoods(): List<Pair<Int, String>> =
+        Goods.selectAll().map { it[Goods.id].value to it[Goods.name] }
+
+    override fun getTags(): List<String> =
+        PokemonTags.selectAll().map { it[PokemonTags.name] }
+
+    override fun getMoves(): List<String> =
+        Moves.selectAll().map { it[Moves.name] }
 }

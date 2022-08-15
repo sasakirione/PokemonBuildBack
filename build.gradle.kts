@@ -39,6 +39,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.3.6")
     implementation("io.insert-koin:koin-core:3.2.0")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-server-cors:2.0.3")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
