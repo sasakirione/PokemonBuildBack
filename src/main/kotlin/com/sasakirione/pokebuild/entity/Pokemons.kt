@@ -2,7 +2,7 @@ package com.sasakirione.pokebuild.entity
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 
-object Pokemons: IntIdTable() {
+object Pokemons : IntIdTable() {
     val name = varchar("name", 10)
     val formName = varchar("form_name", 20).nullable()
     val dexNo = integer("dex_no")

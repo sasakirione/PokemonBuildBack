@@ -1,19 +1,14 @@
 package com.sasakirione.pokebuild
 
-import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
-import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.sasakirione.pokebuild.controller.PokemonDataController
 import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.plugins.moduleA
-import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.Authentication
-import io.ktor.server.auth.Principal
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
@@ -22,7 +17,6 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.experimental.ParallelComputer.methods
 import org.koin.environmentProperties
 import org.koin.fileProperties
 import org.koin.ktor.ext.getProperty
@@ -135,7 +129,6 @@ fun Application.module() {
             authenticate {
                 route("pokemon_build") {
                     get("get_build") {
-                        println("呼出されてるよ！")
                         val principal = call.authentication.principal<JWTPrincipal>()
                         val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@get call.respond(
                             HttpStatusCode.BadRequest

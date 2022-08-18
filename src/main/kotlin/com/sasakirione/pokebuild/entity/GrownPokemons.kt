@@ -2,7 +2,7 @@ package com.sasakirione.pokebuild.entity
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 
-object GrownPokemons: IntIdTable("grown_pokemons") {
+object GrownPokemons : IntIdTable("grown_pokemons") {
     val pokemon = reference("pokemon", Pokemons)
     val good = reference("good", Goods).nullable()
     val ability = reference("ability", Abilities)
