@@ -8,22 +8,24 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class PokemonBuildRepository : IPokemonBuildRepository {
     override fun getBuild(id: Int, authId: String): Build {
+        var buildId: Int
         val build = if (id == 0) {
             val build = PokemonBuilds.innerJoin(Users).select { Users.authId eq authId }
             val isBuildExist = build.count() > 0
             if (isBuildExist) {
-                val buildId = build.map { it[PokemonBuilds.id] }.single()
+                buildId = build.map { it[PokemonBuilds.id] }.single().value
                 PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
                     .innerJoin(Pokemons)
                     .select(PokemonBuilds.id.eq(buildId))
             } else {
-                val buildId = PokemonBuilds.insert {
+                buildId = (PokemonBuilds.insert {
                     it[name] = "構築"
                     it[user] = Users.select { Users.authId eq authId }.single()[Users.id]
-                } get PokemonBuilds.id
-                return Build(buildId.value , "構築", mutableListOf())
+                } get PokemonBuilds.id).value
+                return Build(buildId , "構築", mutableListOf())
             }
         } else {
+            buildId = id
             PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
                 .innerJoin(Pokemons).innerJoin(Users)
                 .select((PokemonBuilds.id eq id) and (Users.authId eq authId))
@@ -79,9 +81,10 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             )
         }
         if (pokemonList.isEmpty()) {
+            val build2 = PokemonBuilds.select { PokemonBuilds.id eq buildId }
             return Build(
-                id = build.map { it[PokemonBuildMap.build] }[0].value,
-                name = build.map { it[PokemonBuilds.name] }[0],
+                id = build2.map { it[PokemonBuilds.id] }[0].value,
+                name = build2.map { it[PokemonBuilds.name] }[0],
                 pokemons = mutableListOf())
         }
         return Build(
