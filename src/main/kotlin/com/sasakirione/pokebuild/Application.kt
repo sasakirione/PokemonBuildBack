@@ -1,7 +1,6 @@
 package com.sasakirione.pokebuild
 
 import com.auth0.jwk.JwkProviderBuilder
-import com.auth0.jwt.algorithms.Algorithm
 import com.sasakirione.pokebuild.controller.*
 import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.plugins.moduleA
@@ -58,8 +57,6 @@ fun Application.module() {
     }
 
     val issur = getProperty("auth0.issuer") ?: ""
-    val audience = getProperty("auth0.audience") ?: ""
-    val algorithm: Algorithm = Algorithm.HMAC256(getProperty("auth0.secret") ?: "")
     val jwkProvider = JwkProviderBuilder(issur)
         .cached(10, 24, TimeUnit.HOURS)
         .rateLimited(10, 1, TimeUnit.MINUTES)

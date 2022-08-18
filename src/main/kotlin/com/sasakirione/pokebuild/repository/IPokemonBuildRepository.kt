@@ -2,7 +2,6 @@ package com.sasakirione.pokebuild.repository
 
 import com.sasakirione.pokebuild.domain.Build
 import com.sasakirione.pokebuild.domain.GrownPokemon
-import com.sasakirione.pokebuild.domain.Pokemon
 
 interface IPokemonBuildRepository {
     /**
@@ -21,7 +20,7 @@ interface IPokemonBuildRepository {
      * @param buildId 構築ID
      * @param authId 対象のユーザーのAuth0のID
      */
-    fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String) : Int
+    fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int
 
     /**
      * 道具を更新する

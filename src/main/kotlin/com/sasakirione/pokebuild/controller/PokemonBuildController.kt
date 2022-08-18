@@ -35,32 +35,32 @@ class PokemonBuildController : KoinComponent {
         useCase.updateMoves(inParams.moves, inParams.pokemonId, authId)
 }
 
-data class PostUpdateGood (
+data class PostUpdateGood(
     val goodId: Int,
     val pokemonId: Int
 )
 
-data class PostUpdateEv (
+data class PostUpdateEv(
     val ev: List<Int>,
     val pokemonId: Int
 )
 
-data class PostUpdateAbility (
+data class PostUpdateAbility(
     val ability: String,
     val pokemonId: Int
 )
 
-data class PostUpdateTag (
+data class PostUpdateTag(
     val tags: List<String>,
     val pokemonId: Int
 )
 
-data class PostUpdateNature (
+data class PostUpdateNature(
     val nature: String,
     val pokemonId: Int
 )
 
-data class PostUpdateMoves (
+data class PostUpdateMoves(
     val moves: List<String>,
     val pokemonId: Int
 )

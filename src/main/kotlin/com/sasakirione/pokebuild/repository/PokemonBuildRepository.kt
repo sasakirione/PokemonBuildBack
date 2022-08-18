@@ -2,7 +2,6 @@ package com.sasakirione.pokebuild.repository
 
 import com.sasakirione.pokebuild.domain.Build
 import com.sasakirione.pokebuild.domain.GrownPokemon
-import com.sasakirione.pokebuild.domain.Pokemon
 import com.sasakirione.pokebuild.entity.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -85,7 +84,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     }
 
     override fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int {
-        val exist = PokemonBuilds.innerJoin(Users).select { (Users.authId eq authId) and (PokemonBuilds.id eq buildId) }.count() > 0
+        val exist = PokemonBuilds.innerJoin(Users).select { (Users.authId eq authId) and (PokemonBuilds.id eq buildId) }
+            .count() > 0
         if (!exist) {
             throw IllegalArgumentException("Build not found")
         }
@@ -105,7 +105,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             it[evD] = pokemon.ev[4]
             it[evS] = pokemon.ev[5]
             it[nature] = pokemon.nature
-            it[ability] = Abilities.select { Abilities.name eq pokemon.ability }.map { row -> row[Abilities.id] }[0].value
+            it[ability] =
+                Abilities.select { Abilities.name eq pokemon.ability }.map { row -> row[Abilities.id] }[0].value
             it[move1] = moves[0]
             it[move2] = moves[1]
             it[move3] = moves[2]
@@ -163,7 +164,9 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         checkAuthId(authId, pokemonId)
         val tags = PokemonTags.select { PokemonTags.name.inList(tagNames) }.map { it[PokemonTags.id] }.toList()
         PokemonTagMap.deleteWhere { (PokemonTagMap.pokemon eq pokemonId) and (PokemonTagMap.tag.notInList(tags)) }
-        tags.filter { tag -> PokemonTagMap.select { (PokemonTagMap.pokemon eq pokemonId) and (PokemonTagMap.tag eq tag) }.count() < 1 }
+        tags.filter { tag ->
+            PokemonTagMap.select { (PokemonTagMap.pokemon eq pokemonId) and (PokemonTagMap.tag eq tag) }.count() < 1
+        }
             .forEach { tag ->
                 PokemonTagMap.insert {
                     it[pokemon] = pokemonId
