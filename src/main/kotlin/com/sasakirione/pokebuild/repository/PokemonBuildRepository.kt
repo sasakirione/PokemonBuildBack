@@ -78,6 +78,12 @@ class PokemonBuildRepository : IPokemonBuildRepository {
                     .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name] }
             )
         }
+        if (pokemonList.isEmpty()) {
+            return Build(
+                id = build.map { it[PokemonBuildMap.build] }[0].value,
+                name = build.map { it[PokemonBuilds.name] }[0],
+                pokemons = mutableListOf())
+        }
         return Build(
             id = build.map { it[PokemonBuildMap.build] }[0].value,
             name = build.map { it[PokemonBuilds.name] }[0],
