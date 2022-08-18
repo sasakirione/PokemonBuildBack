@@ -53,6 +53,7 @@ fun Application.module() {
         allowHeader("authorization")
         allowHeader("Content-Type")
         allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Delete)
         allowCredentials = true
     }
 
@@ -197,6 +198,15 @@ fun Application.module() {
                         )
                         val inParams = call.receive<PostUpdateNature>()
                         call.respond(pokemonBuildController.updateNature(inParams, authId))
+                    }
+
+                    delete("delete_pokemon") {
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@delete call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        val inParams = call.receive<PostDeletePokemon>()
+                        call.respond(pokemonBuildController.deletePokemon(inParams, authId))
                     }
 
                 }

@@ -33,6 +33,9 @@ class PokemonBuildController : KoinComponent {
 
     fun updateMoves(inParams: PostUpdateMoves, authId: String) =
         useCase.updateMoves(inParams.moves, inParams.pokemonId, authId)
+
+    fun deletePokemon(inParams: PostDeletePokemon, authId: String) =
+        useCase.deletePokemon(inParams.pokemonId, authId)
 }
 
 data class PostUpdateGood(
@@ -62,6 +65,10 @@ data class PostUpdateNature(
 
 data class PostUpdateMoves(
     val moves: List<String>,
+    val pokemonId: Int
+)
+
+data class PostDeletePokemon(
     val pokemonId: Int
 )
 

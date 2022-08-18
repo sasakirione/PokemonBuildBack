@@ -206,4 +206,11 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             }
         }
     }
+
+    override fun deletePokemon(pokemonId: Int, authId: String) {
+        checkAuthId(authId, pokemonId)
+        PokemonTagMap.deleteWhere { PokemonTagMap.pokemon eq pokemonId }
+        PokemonBuildMap.deleteWhere { PokemonBuildMap.pokemon eq pokemonId }
+        GrownPokemons.deleteWhere { GrownPokemons.id eq pokemonId }
+    }
 }
