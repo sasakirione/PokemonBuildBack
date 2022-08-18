@@ -32,8 +32,4 @@ class PokemonDataUseCase : KoinComponent {
         pokemonDataRepository.getPokemonList()
     }
 
-    fun getBuild(authId: String) = transaction {
-        pokemonDataRepository.getBuild(0, authId)
-    }
-
 }

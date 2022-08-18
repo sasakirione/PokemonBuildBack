@@ -18,10 +18,6 @@ class PokemonDataController : KoinComponent {
     fun getMoves() = useCase.getMoves()
 
     fun getPokemonList() = useCase.getPokemonList()
-
-    fun getBuild(authId: String): Build {
-        return useCase.getBuild(authId)
-    }
 }
 
 data class PokemonNameList(

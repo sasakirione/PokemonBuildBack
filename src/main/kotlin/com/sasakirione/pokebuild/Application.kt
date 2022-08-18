@@ -2,6 +2,7 @@ package com.sasakirione.pokebuild
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.algorithms.Algorithm
+import com.sasakirione.pokebuild.controller.PokemonBuildController
 import com.sasakirione.pokebuild.controller.PokemonDataController
 import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.plugins.moduleA
@@ -100,6 +101,7 @@ fun Application.module() {
     }
     routing {
         val pokemonDataController: PokemonDataController by inject()
+        val pokemonBuildController: PokemonBuildController by inject()
 
         route("v1") {
             route("pokemon_data") {
@@ -133,7 +135,7 @@ fun Application.module() {
                         val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@get call.respond(
                             HttpStatusCode.BadRequest
                         )
-                        call.respond(pokemonDataController.getBuild(authId))
+                        call.respond(pokemonBuildController.getBuild(authId))
                     }
                 }
             }
