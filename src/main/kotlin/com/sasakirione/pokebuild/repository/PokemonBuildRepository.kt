@@ -11,17 +11,18 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         val build = if (id == 0) {
             val build = PokemonBuilds.innerJoin(Users).select { Users.authId eq authId }
             val isBuildExist = build.count() > 0
-            val buildId = if (isBuildExist) {
-                build.map { it[PokemonBuilds.id] }.single()
+            if (isBuildExist) {
+                val buildId = build.map { it[PokemonBuilds.id] }.single()
+                PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
+                    .innerJoin(Pokemons)
+                    .select(PokemonBuilds.id.eq(buildId))
             } else {
-                PokemonBuilds.insert {
+                val buildId = PokemonBuilds.insert {
                     it[name] = "構築"
                     it[user] = Users.select { Users.authId eq authId }.single()[Users.id]
                 } get PokemonBuilds.id
+                return Build(buildId.value , "構築", mutableListOf())
             }
-            PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
-                .innerJoin(Pokemons)
-                .select(PokemonBuilds.id.eq(buildId))
         } else {
             PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
                 .innerJoin(Pokemons).innerJoin(Users)
