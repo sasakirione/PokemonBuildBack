@@ -10,6 +10,7 @@ class PokemonBuildUseCase : KoinComponent {
     private val pokemonBuildRepository: IPokemonBuildRepository by inject()
 
     fun getBuild(authId: String) = transaction {
+        pokemonBuildRepository.checkUser(authId)
         pokemonBuildRepository.getBuild(0, authId)
     }
 

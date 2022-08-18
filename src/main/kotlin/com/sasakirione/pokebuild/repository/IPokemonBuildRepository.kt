@@ -47,4 +47,6 @@ interface IPokemonBuildRepository {
     fun updateNature(natureName: String, pokemonId: Int, authId: String)
 
     fun updateMoves(moveNames: List<String>, pokemonId: Int, authId: String)
+
+    fun checkUser(authId: String)
 }
