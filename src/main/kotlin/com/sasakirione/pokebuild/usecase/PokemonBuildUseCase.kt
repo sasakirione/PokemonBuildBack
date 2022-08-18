@@ -41,4 +41,8 @@ class PokemonBuildUseCase : KoinComponent {
     fun updateMoves(moveNames: List<String>, pokemonId: Int, authId: String) = transaction {
         pokemonBuildRepository.updateMoves(moveNames, pokemonId, authId)
     }
+
+    fun deletePokemon(pokemonId: Int, authId: String) = transaction {
+        pokemonBuildRepository.deletePokemon(pokemonId, authId)
+    }
 }

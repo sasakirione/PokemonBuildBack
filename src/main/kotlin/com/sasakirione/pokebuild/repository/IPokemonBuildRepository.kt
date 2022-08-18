@@ -49,4 +49,6 @@ interface IPokemonBuildRepository {
     fun updateMoves(moveNames: List<String>, pokemonId: Int, authId: String)
 
     fun checkUser(authId: String)
+
+    fun deletePokemon(pokemonId: Int, authId: String)
 }
