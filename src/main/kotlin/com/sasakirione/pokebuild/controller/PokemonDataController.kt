@@ -1,5 +1,6 @@
 package com.sasakirione.pokebuild.controller
 
+import com.sasakirione.pokebuild.domain.Build
 import com.sasakirione.pokebuild.usecase.PokemonDataUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -15,6 +16,12 @@ class PokemonDataController: KoinComponent {
     fun getTags() = useCase.getTags()
 
     fun getMoves() = useCase.getMoves()
+
+    fun getPokemonList() = useCase.getPokemonList()
+
+    fun getBuild(authId: String): Build {
+        return useCase.getBuild(authId)
+    }
 }
 
 data class PokemonNameList(
