@@ -1,6 +1,5 @@
 package com.sasakirione.pokebuild.controller
 
-import com.sasakirione.pokebuild.domain.Build
 import com.sasakirione.pokebuild.usecase.PokemonDataUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

@@ -5,12 +5,11 @@ import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.domain.Pokemon
 import com.sasakirione.pokebuild.entity.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
-class PokemonBuildRepository: IPokemonBuildRepository {
+class PokemonBuildRepository : IPokemonBuildRepository {
     override fun getBuild(id: Int, authId: String): Build {
         val build = if (id == 0) {
             val build = PokemonBuilds.innerJoin(Users).select { Users.authId eq authId }

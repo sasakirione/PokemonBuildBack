@@ -1,12 +1,7 @@
 package com.sasakirione.pokebuild.repository
 
-import com.sasakirione.pokebuild.domain.Build
-import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.domain.Pokemon
 import com.sasakirione.pokebuild.entity.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 

@@ -1,6 +1,5 @@
 package com.sasakirione.pokebuild.repository
 
-import com.sasakirione.pokebuild.domain.Build
 import com.sasakirione.pokebuild.domain.Pokemon
 
 interface IPokemonDataRepository {
