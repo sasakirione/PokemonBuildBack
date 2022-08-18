@@ -2,8 +2,7 @@ package com.sasakirione.pokebuild
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.algorithms.Algorithm
-import com.sasakirione.pokebuild.controller.PokemonBuildController
-import com.sasakirione.pokebuild.controller.PokemonDataController
+import com.sasakirione.pokebuild.controller.*
 import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.plugins.moduleA
 import io.ktor.http.*
@@ -13,6 +12,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.Database
@@ -52,6 +52,7 @@ fun Application.module() {
         allowHeader("CrossDomain")
         allowHeader("X-CSRF-Token")
         allowHeader("authorization")
+        allowHeader("Content-Type")
         allowMethod(HttpMethod.Options)
         allowCredentials = true
     }
@@ -137,6 +138,70 @@ fun Application.module() {
                         )
                         call.respond(pokemonBuildController.getBuild(authId))
                     }
+
+                    post("post_pokemon") {
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        val inParams = call.receive<PostInsertPokemon>()
+                        call.respond(pokemonBuildController.insertPokemon(inParams, authId))
+                    }
+
+                    post("post_good") {
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        val inParams = call.receive<PostUpdateGood>()
+                        call.respond(pokemonBuildController.updateGood(inParams, authId))
+                    }
+
+                    post("post_ev") {
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        val inParams = call.receive<PostUpdateEv>()
+                        call.respond(pokemonBuildController.updateEv(inParams, authId))
+                    }
+
+                    post("post_tag") {
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        val inParams = call.receive<PostUpdateTag>()
+                        call.respond(pokemonBuildController.updateTag(inParams, authId))
+                    }
+
+                    post("post_moves") {
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        val inParams = call.receive<PostUpdateMoves>()
+                        call.respond(pokemonBuildController.updateMoves(inParams, authId))
+                    }
+
+                    post("post_ability") {
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        val inParams = call.receive<PostUpdateAbility>()
+                        call.respond(pokemonBuildController.updateAbility(inParams, authId))
+                    }
+
+                    post("post_nature") {
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        val inParams = call.receive<PostUpdateNature>()
+                        call.respond(pokemonBuildController.updateNature(inParams, authId))
+                    }
+
                 }
             }
         }
