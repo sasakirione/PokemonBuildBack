@@ -192,4 +192,16 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             it[move4] = moves[3]
         }
     }
+
+    override fun checkUser(authId: String) {
+        val isExist = Users.select { Users.authId eq authId }.count() > 0
+        if (!isExist) {
+            Users.insert {
+                it[name] = "ポケモントレーナー"
+                it[Users.authId] = authId
+                it[profile] = "デフォルトのプロフィールです"
+                it[icon] = "default.png"
+            }
+        }
+    }
 }
