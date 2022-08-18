@@ -15,7 +15,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
                 build.map { it[PokemonBuilds.id] }.single()
             } else {
                 PokemonBuilds.insert {
-                    it[Users.authId] = authId
+                    it[name] = "構築"
+                    it[user] = Users.select { Users.authId eq authId }.single()[Users.id]
                 } get PokemonBuilds.id
             }
             PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
