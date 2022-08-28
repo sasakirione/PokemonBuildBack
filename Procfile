@@ -1,1 +1,1 @@
-web:    java -jar build/libs/PokemonBuild-0.1.0-all.jar
+web:    java -jar build/libs/PokemonBuild-0.1.1-all.jar
