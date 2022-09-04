@@ -1,6 +1,7 @@
 package com.sasakirione.pokebuild.controller
 
 import com.sasakirione.pokebuild.domain.Build
+import com.sasakirione.pokebuild.domain.BuildWithoutPokemonList
 import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.usecase.PokemonBuildUseCase
 import org.koin.core.component.KoinComponent
@@ -36,6 +37,10 @@ class PokemonBuildController : KoinComponent {
 
     fun deletePokemon(inParams: PostDeletePokemon, authId: String) =
         useCase.deletePokemon(inParams.pokemonId, authId)
+
+    fun getBuildList(authId: String): List<BuildWithoutPokemonList> {
+        return useCase.getBuildList(authId)
+    }
 }
 
 data class PostUpdateGood(

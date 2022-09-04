@@ -45,4 +45,9 @@ class PokemonBuildUseCase : KoinComponent {
     fun deletePokemon(pokemonId: Int, authId: String) = transaction {
         pokemonBuildRepository.deletePokemon(pokemonId, authId)
     }
+
+    fun getBuildList(authId: String) = transaction {
+        pokemonBuildRepository.checkUser(authId)
+        pokemonBuildRepository.getBuildList(authId)
+    }
 }

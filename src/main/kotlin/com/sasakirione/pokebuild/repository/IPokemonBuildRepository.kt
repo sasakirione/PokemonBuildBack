@@ -1,6 +1,7 @@
 package com.sasakirione.pokebuild.repository
 
 import com.sasakirione.pokebuild.domain.Build
+import com.sasakirione.pokebuild.domain.BuildWithoutPokemonList
 import com.sasakirione.pokebuild.domain.GrownPokemon
 
 interface IPokemonBuildRepository {
@@ -51,4 +52,6 @@ interface IPokemonBuildRepository {
     fun checkUser(authId: String)
 
     fun deletePokemon(pokemonId: Int, authId: String)
+
+    fun getBuildList(authId: String): List<BuildWithoutPokemonList>
 }

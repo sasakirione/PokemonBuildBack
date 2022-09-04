@@ -1,6 +1,7 @@
 package com.sasakirione.pokebuild.repository
 
 import com.sasakirione.pokebuild.domain.Build
+import com.sasakirione.pokebuild.domain.BuildWithoutPokemonList
 import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.entity.*
 import org.jetbrains.exposed.sql.*
@@ -8,7 +9,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class PokemonBuildRepository : IPokemonBuildRepository {
     override fun getBuild(id: Int, authId: String): Build {
-        var buildId: Int
+        val buildId: Int
         val build = if (id == 0) {
             val build = PokemonBuilds.innerJoin(Users).select { Users.authId eq authId }
             val isBuildExist = build.count() > 0
@@ -221,5 +222,17 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         PokemonTagMap.deleteWhere { PokemonTagMap.pokemon eq pokemonId }
         PokemonBuildMap.deleteWhere { PokemonBuildMap.pokemon eq pokemonId }
         GrownPokemons.deleteWhere { GrownPokemons.id eq pokemonId }
+    }
+
+    override fun getBuildList(authId: String): List<BuildWithoutPokemonList> {
+        val userId = Users.select { Users.authId eq authId }.map { row -> row[Users.id] }[0].value
+        val query = PokemonBuilds.select { PokemonBuilds.user eq userId }
+        return query.map { row ->
+            BuildWithoutPokemonList(
+                row[PokemonBuilds.id].value,
+                row[PokemonBuilds.name],
+                row[PokemonBuilds.comment]  ?: "",
+            )
+        }
     }
 }
