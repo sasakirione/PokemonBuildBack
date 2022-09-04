@@ -14,7 +14,12 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             val build = PokemonBuilds.innerJoin(Users).select { Users.authId eq authId }
             val isBuildExist = build.count() > 0
             if (isBuildExist) {
-                buildId = build.map { it[PokemonBuilds.id] }.single().value
+                val buildRow = build.first()
+                buildId = buildRow[PokemonBuilds.id].value
+                val isZeroPokemonBuild = PokemonBuildMap.select(PokemonBuildMap.id.eq(buildId)).count() < 1
+                if (isZeroPokemonBuild) {
+                    return Build(buildId,buildRow[PokemonBuilds.comment] ?: "",mutableListOf())
+                }
                 PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
                     .innerJoin(Pokemons)
                     .select(PokemonBuilds.id.eq(buildId))
