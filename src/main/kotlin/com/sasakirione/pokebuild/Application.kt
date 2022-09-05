@@ -136,6 +136,14 @@ fun Application.module() {
                         )
                         call.respond(pokemonBuildController.getBuild(authId))
                     }
+                    get("get_build/{id}") {
+                        val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                        val principal = call.authentication.principal<JWTPrincipal>()
+                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@get call.respond(
+                            HttpStatusCode.BadRequest
+                        )
+                        call.respond(pokemonBuildController.getBuildById(id, authId))
+                    }
 
                     get("get_builds") {
                         val principal = call.authentication.principal<JWTPrincipal>()

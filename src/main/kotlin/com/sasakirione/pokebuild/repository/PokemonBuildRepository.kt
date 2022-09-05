@@ -34,7 +34,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             buildId = id
             PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
                 .innerJoin(Pokemons).innerJoin(Users)
-                .select((PokemonBuilds.id eq id) and (Users.authId eq authId))
+                .select((PokemonBuildMap.build eq id) and (Users.authId eq authId))
         }
         val pokemonList = build.map {
             GrownPokemon(

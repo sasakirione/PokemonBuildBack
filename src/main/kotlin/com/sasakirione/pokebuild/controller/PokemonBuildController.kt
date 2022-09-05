@@ -41,6 +41,8 @@ class PokemonBuildController : KoinComponent {
     fun getBuildList(authId: String): List<BuildWithoutPokemonList> {
         return useCase.getBuildList(authId)
     }
+
+    fun getBuildById(id: Int, authId: String): Build = useCase.getBuildById(id, authId)
 }
 
 data class PostUpdateGood(

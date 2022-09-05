@@ -50,4 +50,8 @@ class PokemonBuildUseCase : KoinComponent {
         pokemonBuildRepository.checkUser(authId)
         pokemonBuildRepository.getBuildList(authId)
     }
+
+    fun getBuildById(id: Int, authId: String) = transaction {
+        pokemonBuildRepository.getBuild(id, authId)
+    }
 }
