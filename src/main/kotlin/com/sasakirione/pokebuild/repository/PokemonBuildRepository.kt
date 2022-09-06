@@ -62,16 +62,11 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     }
 
     override fun getBuild(id: Int, authId: String): Build {
+        checkUserBuild(id, authId)
         val build =
             PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
-                .innerJoin(Pokemons)
-                .select(
-                    (PokemonBuilds.id eq id) and (PokemonBuilds.user eq Users.select(Users.authId eq authId)
-                        .first()[Users.id])
-                )
-        val pokemonList = build.map {
-            convertGrownPokemon(it)
-        }
+                .innerJoin(Pokemons).select((PokemonBuildMap.build eq id))
+        val pokemonList = build.map { convertGrownPokemon(it) }
         if (pokemonList.isEmpty()) {
             val build2 = PokemonBuilds.select { PokemonBuilds.id eq id }
             return Build(
@@ -89,14 +84,15 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun getGrownPokemon(pokemonId: Int, authId: String): GrownPokemon {
         checkGrownPokemon(authId, pokemonId)
-        val pokemon = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).select { GrownPokemons.id eq pokemonId }
+        val pokemon = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).innerJoin(Abilities).select { GrownPokemons.id eq pokemonId }
         return convertGrownPokemon(pokemon.first())
     }
 
     override fun getGrownPokemonList(authId: String): List<GrownPokemon> {
         checkUser(authId)
-        val pokemonList = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons)
-            .select { GrownPokemons.user eq Users.select { Users.authId eq authId }.first()[Users.id] }
+        val userId = getUserIdFromAuthId(authId)
+        val pokemonList = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).innerJoin(Abilities)
+            .select { GrownPokemons.user eq userId }
         return pokemonList.map { convertGrownPokemon(it) }
     }
 
@@ -335,7 +331,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun getPokemonListFromBuild(id: Int, authId: String): List<GrownPokemon> {
         checkUserBuild(id, authId)
-        val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons)
+        val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
             .select { (PokemonBuildMap.build eq id) and (PokemonBuildMap.pokemon eq GrownPokemons.id) }
         return query.map { row -> convertGrownPokemon(row) }
     }
@@ -352,7 +348,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun getPokemonByIdFromBuild(buildId: Int, pokemonId: Int, authId: String): GrownPokemon {
         checkUserBuild(buildId, authId)
         checkGrownPokemon(authId, pokemonId)
-        val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons)
+        val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
             .select { (PokemonBuildMap.build eq buildId) and (PokemonBuildMap.pokemon eq pokemonId) }
         return query.map { row -> convertGrownPokemon(row) }[0]
     }

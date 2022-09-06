@@ -20,7 +20,7 @@ fun Route.pokemonBuildRoute() {
 
     authenticate {
         route("pokemon-build") {
-            route("build") {
+            route("builds") {
                 get {
                     val principal = call.authentication.principal<JWTPrincipal>()
                     val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@get call.respond(

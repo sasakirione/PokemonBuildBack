@@ -11,7 +11,7 @@ fun Route.pokemonDataRoute() {
     val pokemonDataController: PokemonDataController by inject()
 
     route("pokemon-data") {
-        route("pokemon") {
+        route("pokemons") {
             get {
                 call.respond(pokemonDataController.getPokemonList())
             }
@@ -62,7 +62,7 @@ fun Route.pokemonDataRoute() {
                 // call.respond(pokemonDataController.getNature())
             }
         }
-        route("tag") {
+        route("tags") {
             get {
                 call.respond(pokemonDataController.getTags())
             }
