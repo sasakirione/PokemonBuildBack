@@ -66,4 +66,18 @@ interface IPokemonBuildRepository {
     fun updateMove(moveIds: List<Int>, pokemonId: Int, authId: String)
 
     fun updateGoodByValue(goodName: String, pokemonId: Int, authId: String)
+    fun getGrownPokemon(pokemonId: Int, authId: String): GrownPokemon
+
+    fun getGrownPokemonList(authId: String) : List<GrownPokemon>
+
+    fun insertGrownPokemon(pokemon: GrownPokemon, authId: String): Int
+
+    fun deletePokemonFromBuild(buildId: Int, pokemonId: Int, authId: String)
+    fun createBuild(build: BuildWithoutPokemonList, authId: String)
+    fun updateBuild(id: Int, build: BuildWithoutPokemonList, authId: String)
+    fun deleteBuild(id: Int, authId: String)
+
+    fun getPokemonListFromBuild(id: Int, authId: String) : List<GrownPokemon>
+    fun addPokemon(buildId: Int, pokemonId: Int, authId: String)
+    fun getPokemonByIdFromBuild(buildId: Int, pokemonId: Int, authId: String) : GrownPokemon
 }

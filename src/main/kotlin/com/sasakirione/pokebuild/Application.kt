@@ -52,6 +52,7 @@ fun Application.module() {
         allowHeader("Content-Type")
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Put)
         allowCredentials = true
     }
 
@@ -77,7 +78,16 @@ fun Application.module() {
         password = getProperty("db.password") ?: "password"
     )
 
-    transaction {
+    dbMigration()
+    routing {
+        route("v1") {
+            pokemonDataRoute()
+            pokemonBuildRoute()
+        }
+    }
+}
+
+private fun dbMigration() = transaction {
         SchemaUtils.create(Abilities)
         SchemaUtils.create(GameVersions)
         SchemaUtils.create(Goods)
@@ -94,13 +104,4 @@ fun Application.module() {
         SchemaUtils.create(PokemonTags)
         SchemaUtils.create(PokemonTypeMap)
         SchemaUtils.create(Types)
-        SchemaUtils.create(Users)
-    }
-    routing {
-        route("v1") {
-            pokemonDataRoute()
-            pokemonBuildRoute()
-        }
-    }
-
-}
+        SchemaUtils.create(Users)}

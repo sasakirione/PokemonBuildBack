@@ -1,6 +1,7 @@
 package com.sasakirione.pokebuild.usecase
 
 import com.sasakirione.pokebuild.controller.UpdateType
+import com.sasakirione.pokebuild.domain.BuildWithoutPokemonList
 import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.repository.IPokemonBuildRepository
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -10,38 +11,8 @@ import org.koin.core.component.inject
 class PokemonBuildUseCase : KoinComponent {
     private val pokemonBuildRepository: IPokemonBuildRepository by inject()
 
-    fun getBuild(authId: String) = transaction {
-        pokemonBuildRepository.checkUser(authId)
-        val buildId = pokemonBuildRepository.getFirstBuildId(authId)
-        pokemonBuildRepository.getBuild(buildId, authId)
-    }
-
     fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String) = transaction {
         pokemonBuildRepository.insertPokemon(pokemon, buildId, authId)
-    }
-
-    fun updateGood(goodId: Int, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateGood(goodId, pokemonId, authId)
-    }
-
-    fun updateEv(ev: List<Int>, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateEv(ev, pokemonId, authId)
-    }
-
-    fun updateAbility(abilityName: String, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateAbilityByValue(abilityName, pokemonId, authId)
-    }
-
-    fun updateNature(natureName: String, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateNatureByValue(natureName, pokemonId, authId)
-    }
-
-    fun updateTags(tagNames: List<String>, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateTagByValue(tagNames, pokemonId, authId)
-    }
-
-    fun updateMoves(moveNames: List<String>, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateMovesByValue(moveNames, pokemonId, authId)
     }
 
     fun deletePokemon(pokemonId: Int, authId: String) = transaction {
@@ -79,5 +50,45 @@ class PokemonBuildUseCase : KoinComponent {
             UpdateType.TAG -> pokemonBuildRepository.updateTagByValue(values, id, authId)
             UpdateType.MOVE -> pokemonBuildRepository.updateMovesByValue(values, id, authId)
         }
+    }
+
+    fun getGrownPokemon(id: Int, authId: String) = transaction {
+        pokemonBuildRepository.getGrownPokemon(id, authId)
+    }
+
+    fun getGrownPokemonList(authId: String) = transaction {
+        pokemonBuildRepository.getGrownPokemonList(authId)
+    }
+
+    fun insertGrownPokemon(pokemon: GrownPokemon, authId: String) = transaction {
+        pokemonBuildRepository.insertGrownPokemon(pokemon, authId)
+    }
+
+    fun deletePokemonFromBuild(buildId: Int, pokemonId: Int, authId: String) = transaction {
+        pokemonBuildRepository.deletePokemonFromBuild(buildId, pokemonId, authId)
+    }
+
+    fun createBuild(build: BuildWithoutPokemonList, authId: String) = transaction {
+        pokemonBuildRepository.createBuild(build, authId)
+    }
+
+    fun updateBuild(id: Int, build: BuildWithoutPokemonList, authId: String) = transaction {
+        pokemonBuildRepository.updateBuild(id, build, authId)
+    }
+
+    fun deleteBuild(id: Int, authId: String) = transaction {
+        pokemonBuildRepository.deleteBuild(id, authId)
+    }
+
+    fun getPokemonListFromBuild(id: Int, authId: String) = transaction {
+        pokemonBuildRepository.getPokemonListFromBuild(id, authId)
+    }
+
+    fun addPokemon(buildId: Int, pokemonId: Int, authId: String) = transaction {
+        pokemonBuildRepository.addPokemon(buildId, pokemonId, authId)
+    }
+
+    fun getPokemonByIdFromBuild(buildId: Int, pokemonId: Int, authId: String) = transaction {
+        pokemonBuildRepository.getPokemonByIdFromBuild(buildId, pokemonId, authId)
     }
 }

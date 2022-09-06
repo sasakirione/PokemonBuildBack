@@ -10,33 +10,8 @@ import org.koin.core.component.inject
 class PokemonBuildController : KoinComponent {
     private val useCase: PokemonBuildUseCase by inject()
 
-    fun getBuild(authId: String): Build {
-        return useCase.getBuild(authId)
-    }
-
     fun insertPokemon(inParams: PostInsertPokemon, authId: String): ResponseInsertPokemon =
         ResponseInsertPokemon(useCase.insertPokemon(inParams.pokemon, inParams.buildId, authId))
-
-    fun updateGood(inParams: PostUpdateGood, authId: String) =
-        useCase.updateGood(inParams.goodId, inParams.pokemonId, authId)
-
-    fun updateEv(inParams: PostUpdateEv, authId: String) =
-        useCase.updateEv(inParams.ev, inParams.pokemonId, authId)
-
-    fun updateAbility(inParams: PostUpdateAbility, authId: String) =
-        useCase.updateAbility(inParams.ability, inParams.pokemonId, authId)
-
-    fun updateTag(inParams: PostUpdateTag, authId: String) =
-        useCase.updateTags(inParams.tags, inParams.pokemonId, authId)
-
-    fun updateNature(inParams: PostUpdateNature, authId: String) =
-        useCase.updateNature(inParams.nature, inParams.pokemonId, authId)
-
-    fun updateMoves(inParams: PostUpdateMoves, authId: String) =
-        useCase.updateMoves(inParams.moves, inParams.pokemonId, authId)
-
-    fun deletePokemon(inParams: PostDeletePokemon, authId: String) =
-        useCase.deletePokemon(inParams.pokemonId, authId)
 
     fun deletePokemon(id: Int, authId: String) =
         useCase.deletePokemon(id, authId)
@@ -72,6 +47,36 @@ class PokemonBuildController : KoinComponent {
                 else -> throw IllegalArgumentException("存在しない項目を更新しようとしています")
             }
         )
+
+    fun getGrownPokemon(id: Int, authId: String) =
+        useCase.getGrownPokemon(id, authId)
+
+    fun getGrownPokemonList(authId: String) =
+        useCase.getGrownPokemonList(authId)
+
+    fun insertGrownPokemon(inParams: GrownPokemon, authId: String) =
+        useCase.insertGrownPokemon(inParams, authId)
+
+    fun deletePokemonFromBuild(buildId: Int, pokemonId: Int, authId: String) =
+        useCase.deletePokemonFromBuild(buildId, pokemonId, authId)
+
+    fun createBuild(build: BuildWithoutPokemonList, authId: String) =
+        useCase.createBuild(build, authId)
+
+    fun updateBuild(id: Int, build: BuildWithoutPokemonList, authId: String) =
+        useCase.updateBuild(id, build, authId)
+
+    fun deleteBuild(id: Int, authId: String) =
+        useCase.deleteBuild(id, authId)
+
+    fun getPokemonListFromBuild(id: Int, authId: String) =
+        useCase.getPokemonListFromBuild(id, authId)
+
+    fun addPokemon(buildId: Int, pokemonId: Int, authId: String) =
+        useCase.addPokemon(buildId, pokemonId, authId)
+
+    fun getPokemonByIdFromBuild(buildId: Int, pokemonId: Int, authId: String) =
+        useCase.getPokemonByIdFromBuild(buildId, pokemonId, authId)
 }
 
 data class PostUpdateGrownPokemon(
@@ -82,40 +87,6 @@ data class PostUpdateGrownPokemon(
 data class PostUpdateGrownPokemon2(
     val values: List<String>,
     val itemSelect: Int
-)
-
-data class PostUpdateGood(
-    val goodId: Int,
-    val pokemonId: Int
-)
-
-data class PostUpdateEv(
-    val ev: List<Int>,
-    val pokemonId: Int
-)
-
-data class PostUpdateAbility(
-    val ability: String,
-    val pokemonId: Int
-)
-
-data class PostUpdateTag(
-    val tags: List<String>,
-    val pokemonId: Int
-)
-
-data class PostUpdateNature(
-    val nature: String,
-    val pokemonId: Int
-)
-
-data class PostUpdateMoves(
-    val moves: List<String>,
-    val pokemonId: Int
-)
-
-data class PostDeletePokemon(
-    val pokemonId: Int
 )
 
 data class ResponseInsertPokemon(val pokemonId: Int)
