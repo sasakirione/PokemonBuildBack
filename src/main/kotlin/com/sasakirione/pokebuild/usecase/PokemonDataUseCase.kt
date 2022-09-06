@@ -8,10 +8,6 @@ import org.koin.core.component.inject
 class PokemonDataUseCase : KoinComponent {
     private val pokemonDataRepository: IPokemonDataRepository by inject()
 
-    fun getPokemonNameList(input: String) = transaction {
-        pokemonDataRepository.getPokemonNameList(input)
-    }
-
     fun getPokemonData(id: Int) = transaction {
         pokemonDataRepository.getPokemon(id)
     }

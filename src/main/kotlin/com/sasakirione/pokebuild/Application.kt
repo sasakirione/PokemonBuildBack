@@ -2,6 +2,7 @@ package com.sasakirione.pokebuild
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.sasakirione.pokebuild.entity.*
+import com.sasakirione.pokebuild.plugins.MasterCache
 import com.sasakirione.pokebuild.plugins.moduleA
 import com.sasakirione.pokebuild.plugins.pokemonBuildRoute
 import com.sasakirione.pokebuild.plugins.pokemonDataRoute
@@ -15,6 +16,7 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.environmentProperties
 import org.koin.fileProperties
@@ -78,6 +80,7 @@ fun Application.module() {
         password = getProperty("db.password") ?: "password"
     )
     dbMigration()
+    setCache()
     routing {
         route("v1") {
             pokemonDataRoute()
@@ -104,4 +107,15 @@ private fun dbMigration() = transaction {
     SchemaUtils.create(PokemonTypeMap)
     SchemaUtils.create(Types)
     SchemaUtils.create(Users)
+}
+
+private fun setCache() = transaction {
+    MasterCache.abilities = Abilities.selectAll().map { it[Abilities.id].value to it[Abilities.name] }.toList()
+    MasterCache.goods = Goods.selectAll().map { it[Goods.id].value to it[Goods.name] }.toList()
+    MasterCache.moves = Moves.selectAll().map { it[Moves.id].value to it[Moves.name] }.toList()
+    MasterCache.natures = Natures.selectAll().map { it[Natures.id].value to it[Natures.name] }.toList()
+    MasterCache.tags = PokemonTags.selectAll().map { it[PokemonTags.id].value to it[PokemonTags.name] }.toList()
+    MasterCache.types = Types.selectAll().map { it[Types.id].value to it[Types.name] }.toList()
+    MasterCache.abilityMap = PokemonAbilityMap.selectAll().map { it[PokemonAbilityMap.pokemon].value to it[PokemonAbilityMap.ability].value }.toList()
+    MasterCache.simplePokemons = Pokemons.selectAll().map { it[Pokemons.id].value to (it[Pokemons.name] + " " +( it[Pokemons.formName] ?: "")) }.toList()
 }

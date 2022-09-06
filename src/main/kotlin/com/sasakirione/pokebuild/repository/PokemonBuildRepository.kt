@@ -5,7 +5,7 @@ import com.sasakirione.pokebuild.domain.BuildWithoutPokemonList
 import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.entity.GrownPokemons.good
-import org.jetbrains.exposed.dao.id.EntityID
+import com.sasakirione.pokebuild.plugins.MasterCache
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
@@ -57,7 +57,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun updateGoodByValue(goodName: String, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
         GrownPokemons.innerJoin(Goods).update({ GrownPokemons.id eq pokemonId }) {
-            it[good] = Goods.select { Goods.name eq goodName }.map { row -> row[Goods.id] }[0].value
+            it[good] = MasterCache.getGoodId(goodName)
         }
     }
 
@@ -67,17 +67,17 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
                 .innerJoin(Pokemons).select((PokemonBuildMap.build eq id))
         val pokemonList = build.map { convertGrownPokemon(it) }
+        val build2 = PokemonBuilds.select { PokemonBuilds.id eq id }.single()
         if (pokemonList.isEmpty()) {
-            val build2 = PokemonBuilds.select { PokemonBuilds.id eq id }
             return Build(
-                id = build2.map { it[PokemonBuilds.id] }[0].value,
-                name = build2.map { it[PokemonBuilds.name] }[0],
+                id = build2[PokemonBuilds.id].value,
+                name = build2[PokemonBuilds.name],
                 pokemons = mutableListOf()
             )
         }
         return Build(
-            id = build.map { it[PokemonBuildMap.build] }[0].value,
-            name = build.map { it[PokemonBuilds.name] }[0],
+            id = build2[PokemonBuilds.id].value,
+            name = build2[PokemonBuilds.name],
             pokemons = pokemonList,
         )
     }
@@ -98,7 +98,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun insertGrownPokemon(pokemon: GrownPokemon, authId: String): Int {
         checkUser(authId)
-        val moves = Moves.select { Moves.name.inList(pokemon.moveList) }.map { it[Moves.id] }.toList()
+        val moves = MasterCache.getMoveIdList(pokemon.moveList)
         return getIdFromInsertGrownPokemon(pokemon, moves, authId).value
     }
 
@@ -129,9 +129,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         ),
         nature = it[GrownPokemons.nature].value,
         ability = it[Abilities.name],
-        abilityList = PokemonAbilityMap.innerJoin(Abilities)
-            .select { PokemonAbilityMap.pokemon eq it[GrownPokemons.pokemon] }
-            .map { row -> row[Abilities.name] },
+        abilityList = MasterCache.getPokemonAbilities(it[Pokemons.id].value),
         bv = listOf(
             it[Pokemons.baseH],
             it[Pokemons.baseA],
@@ -140,17 +138,14 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             it[Pokemons.baseD],
             it[Pokemons.baseS]
         ),
-        moveList = Moves.select {
-            Moves.id.inList(
+        moveList = MasterCache.getMoveNameList(
                 listOf(
                     it[GrownPokemons.move1]!!.value,
                     it[GrownPokemons.move2]!!.value,
                     it[GrownPokemons.move3]!!.value,
                     it[GrownPokemons.move4]!!.value
                 )
-            )
-        }
-            .toList().map { row -> row[Moves.name] },
+            ),
         good = it[Goods.name],
         tag = PokemonTagMap.innerJoin(PokemonTags)
             .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name] }
@@ -162,7 +157,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         if (!exist) {
             throw IllegalArgumentException("Build not found")
         }
-        val moves = Moves.select { Moves.name.inList(pokemon.moveList) }.map { it[Moves.id] }.toList()
+        val moves = MasterCache.getMoveIdList(pokemon.moveList)
         val pokemonId = getIdFromInsertGrownPokemon(pokemon, moves, authId)
         PokemonBuildMap.insert {
             it[build] = buildId
@@ -173,7 +168,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     private fun getIdFromInsertGrownPokemon(
         pokemon: GrownPokemon,
-        moves: List<EntityID<Int>>,
+        moves: List<Int>,
         authId: String
     ) = GrownPokemons.insert {
         it[GrownPokemons.pokemon] = pokemon.id
@@ -190,14 +185,13 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         it[evD] = pokemon.ev[4]
         it[evS] = pokemon.ev[5]
         it[nature] = pokemon.nature
-        it[ability] =
-            Abilities.select { Abilities.name eq pokemon.ability }.map { row -> row[id] }[0].value
+        it[ability] = MasterCache.getAbilityId(pokemon.ability)
         it[move1] = moves[0]
         it[move2] = moves[1]
         it[move3] = moves[2]
         it[move4] = moves[3]
         if (pokemon.good != "選択なし") {
-            it[good] = Goods.select { Goods.name eq pokemon.good }.map { row -> row[id] }[0].value
+            it[good] = MasterCache.getGoodId(pokemon.good)
         } else {
             it[good] = 1
         }
@@ -235,7 +229,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun updateAbilityByValue(abilityName: String, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
         GrownPokemons.update({ GrownPokemons.id eq pokemonId }) {
-            it[ability] = Abilities.select { Abilities.name eq abilityName }.map { row -> row[Abilities.id] }[0].value
+            it[ability] = MasterCache.getAbilityId(abilityName)
         }
     }
 
@@ -257,13 +251,13 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun updateNatureByValue(natureName: String, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
         GrownPokemons.update({ GrownPokemons.id eq pokemonId }) {
-            it[nature] = Natures.select { Natures.name eq natureName }.map { row -> row[Natures.id] }[0].value
+            it[nature] = MasterCache.getNatureId(natureName)
         }
     }
 
     override fun updateMovesByValue(moveNames: List<String>, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
-        val moves = Moves.select { Moves.name.inList(moveNames) }.map { it[Moves.id] }.toList()
+        val moves = MasterCache.getMoveIdList(moveNames)
         GrownPokemons.update({ GrownPokemons.id eq pokemonId }) {
             it[move1] = moves[0]
             it[move2] = moves[1]

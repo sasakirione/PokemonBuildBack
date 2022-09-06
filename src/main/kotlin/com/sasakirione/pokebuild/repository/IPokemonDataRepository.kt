@@ -3,13 +3,6 @@ package com.sasakirione.pokebuild.repository
 import com.sasakirione.pokebuild.domain.Pokemon
 
 interface IPokemonDataRepository {
-    /**
-     *
-     *
-     * @param input
-     * @return
-     */
-    fun getPokemonNameList(input: String): List<String>
 
     /**
      * ポケモンの情報を取得する
