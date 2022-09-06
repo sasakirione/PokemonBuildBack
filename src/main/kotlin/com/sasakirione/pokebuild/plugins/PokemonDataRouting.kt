@@ -10,28 +10,66 @@ import org.koin.ktor.ext.inject
 fun Route.pokemonDataRoute() {
     val pokemonDataController: PokemonDataController by inject()
 
-    route("pokemon_data") {
-        get("/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
-            call.respond(pokemonDataController.getPokemon(id))
-        }
-        route("suggest_list") {
-            get("/{input}") {
-                val input = call.parameters["input"] ?: return@get call.respond(HttpStatusCode.BadRequest)
-                call.respond(pokemonDataController.getPokemonNameList(input))
+    route("pokemon-data") {
+        route("pokemon") {
+            get {
+                call.respond(pokemonDataController.getPokemonList())
+            }
+            route("/{id}") {
+                get {
+                    val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                    call.respond(pokemonDataController.getPokemon(id))
+                }
+                get("moves") {
+                    val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                    // call.respond(pokemonDataController.getPokemonMoves(id))
+                }
+                get("abilities") {
+                    val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                    // call.respond(pokemonDataController.getPokemonAbilities(id))
+                }
             }
         }
-        get("get_goods") {
-            call.respond(pokemonDataController.getGoods())
+        route("goods") {
+            get {
+                call.respond(pokemonDataController.getGoods())
+            }
+            get("/{id}") {
+                val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                //call.respond(pokemonDataController.getGood(id))
+            }
         }
-        get("get_tags") {
-            call.respond(pokemonDataController.getTags())
+        route("moves") {
+            get {
+                call.respond(pokemonDataController.getMoves())
+            }
+            get("/{id}") {
+                val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                //call.respond(pokemonDataController.getGood(id))
+            }
         }
-        get("get_moves") {
-            call.respond(pokemonDataController.getMoves())
+        route("abilities") {
+            get {
+                // call.respond(pokemonDataController.getAbilities())
+            }
+            get("/{id}") {
+                val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                //call.respond(pokemonDataController.getGood(id))
+            }
         }
-        get("pokemon_list") {
-            call.respond(pokemonDataController.getPokemonList())
+        route("nature") {
+            get {
+                // call.respond(pokemonDataController.getNature())
+            }
+        }
+        route("tag") {
+            get {
+                call.respond(pokemonDataController.getTags())
+            }
+            get("/{id}") {
+                val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                //call.respond(pokemonDataController.getGood(id))
+            }
         }
     }
 }
