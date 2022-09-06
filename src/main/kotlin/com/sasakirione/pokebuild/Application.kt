@@ -77,7 +77,6 @@ fun Application.module() {
         user = getProperty("db.user") ?: "sasakirione",
         password = getProperty("db.password") ?: "password"
     )
-
     dbMigration()
     routing {
         route("v1") {
@@ -88,20 +87,21 @@ fun Application.module() {
 }
 
 private fun dbMigration() = transaction {
-        SchemaUtils.create(Abilities)
-        SchemaUtils.create(GameVersions)
-        SchemaUtils.create(Goods)
-        SchemaUtils.create(GrownPokemons)
-        SchemaUtils.create(Moves)
-        SchemaUtils.create(MoveSelects)
-        SchemaUtils.create(Natures)
-        SchemaUtils.create(PokemonAbilityMap)
-        SchemaUtils.create(PokemonBuildMap)
-        SchemaUtils.create(PokemonBuilds)
-        SchemaUtils.create(PokemonMoveMap)
-        SchemaUtils.create(Pokemons)
-        SchemaUtils.create(PokemonTagMap)
-        SchemaUtils.create(PokemonTags)
-        SchemaUtils.create(PokemonTypeMap)
-        SchemaUtils.create(Types)
-        SchemaUtils.create(Users)}
+    SchemaUtils.create(Abilities)
+    SchemaUtils.create(GameVersions)
+    SchemaUtils.create(Goods)
+    SchemaUtils.create(GrownPokemons)
+    SchemaUtils.create(Moves)
+    SchemaUtils.create(MoveSelects)
+    SchemaUtils.create(Natures)
+    SchemaUtils.create(PokemonAbilityMap)
+    SchemaUtils.create(PokemonBuildMap)
+    SchemaUtils.create(PokemonBuilds)
+    SchemaUtils.create(PokemonMoveMap)
+    SchemaUtils.create(Pokemons)
+    SchemaUtils.create(PokemonTagMap)
+    SchemaUtils.create(PokemonTags)
+    SchemaUtils.create(PokemonTypeMap)
+    SchemaUtils.create(Types)
+    SchemaUtils.create(Users)
+}

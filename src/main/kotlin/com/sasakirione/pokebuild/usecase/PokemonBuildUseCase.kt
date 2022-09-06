@@ -28,20 +28,25 @@ class PokemonBuildUseCase : KoinComponent {
         pokemonBuildRepository.getBuild(id, authId)
     }
 
-    fun updateGrownPokemonById(pokemonId: Int, authId: String, itemIds: List<Int>, updateType: UpdateType) = transaction {
-        if (itemIds.isEmpty()) {throw IllegalArgumentException("IDが含まれていません！")}
-        when (updateType) {
-            UpdateType.GOOD -> pokemonBuildRepository.updateGood(itemIds[0], pokemonId, authId)
-            UpdateType.EV -> pokemonBuildRepository.updateEv(itemIds, pokemonId, authId)
-            UpdateType.ABILITY -> pokemonBuildRepository.updateAbility(itemIds[0], pokemonId, authId)
-            UpdateType.NATURE -> pokemonBuildRepository.updateNature(itemIds[0], pokemonId, authId)
-            UpdateType.TAG -> pokemonBuildRepository.updateTag(itemIds, pokemonId, authId)
-            UpdateType.MOVE -> pokemonBuildRepository.updateMove(itemIds, pokemonId, authId)
+    fun updateGrownPokemonById(pokemonId: Int, authId: String, itemIds: List<Int>, updateType: UpdateType) =
+        transaction {
+            if (itemIds.isEmpty()) {
+                throw IllegalArgumentException("IDが含まれていません！")
+            }
+            when (updateType) {
+                UpdateType.GOOD -> pokemonBuildRepository.updateGood(itemIds[0], pokemonId, authId)
+                UpdateType.EV -> pokemonBuildRepository.updateEv(itemIds, pokemonId, authId)
+                UpdateType.ABILITY -> pokemonBuildRepository.updateAbility(itemIds[0], pokemonId, authId)
+                UpdateType.NATURE -> pokemonBuildRepository.updateNature(itemIds[0], pokemonId, authId)
+                UpdateType.TAG -> pokemonBuildRepository.updateTag(itemIds, pokemonId, authId)
+                UpdateType.MOVE -> pokemonBuildRepository.updateMove(itemIds, pokemonId, authId)
+            }
         }
-    }
 
     fun updateGrownPokemonByValue(id: Int, authId: String, values: List<String>, updateType: UpdateType) = transaction {
-        if (values.isEmpty()) {throw IllegalArgumentException("値が含まれていません！")}
+        if (values.isEmpty()) {
+            throw IllegalArgumentException("値が含まれていません！")
+        }
         when (updateType) {
             UpdateType.GOOD -> pokemonBuildRepository.updateGoodByValue(values[0], id, authId)
             UpdateType.EV -> throw IllegalArgumentException("EVはIDで更新してください！")
