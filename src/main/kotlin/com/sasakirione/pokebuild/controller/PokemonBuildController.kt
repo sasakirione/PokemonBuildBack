@@ -38,12 +38,51 @@ class PokemonBuildController : KoinComponent {
     fun deletePokemon(inParams: PostDeletePokemon, authId: String) =
         useCase.deletePokemon(inParams.pokemonId, authId)
 
+    fun deletePokemon(id: Int, authId: String) =
+        useCase.deletePokemon(id, authId)
+
     fun getBuildList(authId: String): List<BuildWithoutPokemonList> {
         return useCase.getBuildList(authId)
     }
 
     fun getBuildById(id: Int, authId: String): Build = useCase.getBuildById(id, authId)
+
+    fun updateGrownPokemonById(id: Int, inParams: PostUpdateGrownPokemon, authId: String) =
+        useCase.updateGrownPokemonById(
+            id, authId, inParams.ids, when (inParams.itemSelect) {
+                1 -> UpdateType.ABILITY
+                2 -> UpdateType.EV
+                3 -> UpdateType.GOOD
+                4 -> UpdateType.MOVE
+                5 -> UpdateType.NATURE
+                6 -> UpdateType.TAG
+                else -> throw IllegalArgumentException("存在しない項目を更新しようとしています")
+            }
+        )
+
+    fun updateGrownPokemonByValue(id: Int, inParams: PostUpdateGrownPokemon2, authId: String) =
+        useCase.updateGrownPokemonByValue(
+            id, authId, inParams.values, when (inParams.itemSelect) {
+                1 -> UpdateType.ABILITY
+                2 -> UpdateType.EV
+                3 -> UpdateType.GOOD
+                4 -> UpdateType.MOVE
+                5 -> UpdateType.NATURE
+                6 -> UpdateType.TAG
+                else -> throw IllegalArgumentException("存在しない項目を更新しようとしています")
+            }
+        )
 }
+
+data class PostUpdateGrownPokemon(
+    val ids: List<Int>,
+    val itemSelect: Int
+)
+
+data class PostUpdateGrownPokemon2(
+    val values: List<String>,
+    val itemSelect: Int
+)
 
 data class PostUpdateGood(
     val goodId: Int,
@@ -82,3 +121,7 @@ data class PostDeletePokemon(
 data class ResponseInsertPokemon(val pokemonId: Int)
 
 data class PostInsertPokemon(val pokemon: GrownPokemon, val buildId: Int)
+
+enum class UpdateType {
+    GOOD, EV, ABILITY, TAG, NATURE, MOVE
+}

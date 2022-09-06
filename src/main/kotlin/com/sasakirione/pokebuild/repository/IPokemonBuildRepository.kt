@@ -41,17 +41,29 @@ interface IPokemonBuildRepository {
      */
     fun updateEv(ev: List<Int>, pokemonId: Int, authId: String)
 
-    fun updateAbility(abilityName: String, pokemonId: Int, authId: String)
+    fun updateAbilityByValue(abilityName: String, pokemonId: Int, authId: String)
 
-    fun updateTag(tagNames: List<String>, pokemonId: Int, authId: String)
+    fun updateTagByValue(tagNames: List<String>, pokemonId: Int, authId: String)
 
-    fun updateNature(natureName: String, pokemonId: Int, authId: String)
+    fun updateNatureByValue(natureName: String, pokemonId: Int, authId: String)
 
-    fun updateMoves(moveNames: List<String>, pokemonId: Int, authId: String)
+    fun updateMovesByValue(moveNames: List<String>, pokemonId: Int, authId: String)
 
     fun checkUser(authId: String)
 
     fun deletePokemon(pokemonId: Int, authId: String)
 
     fun getBuildList(authId: String): List<BuildWithoutPokemonList>
+
+    fun getFirstBuildId(authId: String): Int
+
+    fun updateAbility(abilityId: Int, pokemonId: Int, authId: String)
+
+    fun updateNature(natureId: Int, pokemonId: Int, authId: String)
+
+    fun updateTag(tagId: List<Int>, pokemonId: Int, authId: String)
+
+    fun updateMove(moveIds: List<Int>, pokemonId: Int, authId: String)
+
+    fun updateGoodByValue(goodName: String, pokemonId: Int, authId: String)
 }

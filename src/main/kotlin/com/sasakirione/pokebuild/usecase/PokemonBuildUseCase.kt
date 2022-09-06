@@ -1,5 +1,6 @@
 package com.sasakirione.pokebuild.usecase
 
+import com.sasakirione.pokebuild.controller.UpdateType
 import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.repository.IPokemonBuildRepository
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -11,7 +12,8 @@ class PokemonBuildUseCase : KoinComponent {
 
     fun getBuild(authId: String) = transaction {
         pokemonBuildRepository.checkUser(authId)
-        pokemonBuildRepository.getBuild(0, authId)
+        val buildId = pokemonBuildRepository.getFirstBuildId(authId)
+        pokemonBuildRepository.getBuild(buildId, authId)
     }
 
     fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String) = transaction {
@@ -27,19 +29,19 @@ class PokemonBuildUseCase : KoinComponent {
     }
 
     fun updateAbility(abilityName: String, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateAbility(abilityName, pokemonId, authId)
+        pokemonBuildRepository.updateAbilityByValue(abilityName, pokemonId, authId)
     }
 
     fun updateNature(natureName: String, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateNature(natureName, pokemonId, authId)
+        pokemonBuildRepository.updateNatureByValue(natureName, pokemonId, authId)
     }
 
     fun updateTags(tagNames: List<String>, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateTag(tagNames, pokemonId, authId)
+        pokemonBuildRepository.updateTagByValue(tagNames, pokemonId, authId)
     }
 
     fun updateMoves(moveNames: List<String>, pokemonId: Int, authId: String) = transaction {
-        pokemonBuildRepository.updateMoves(moveNames, pokemonId, authId)
+        pokemonBuildRepository.updateMovesByValue(moveNames, pokemonId, authId)
     }
 
     fun deletePokemon(pokemonId: Int, authId: String) = transaction {
@@ -53,5 +55,29 @@ class PokemonBuildUseCase : KoinComponent {
 
     fun getBuildById(id: Int, authId: String) = transaction {
         pokemonBuildRepository.getBuild(id, authId)
+    }
+
+    fun updateGrownPokemonById(pokemonId: Int, authId: String, itemIds: List<Int>, updateType: UpdateType) = transaction {
+        if (itemIds.isEmpty()) {throw IllegalArgumentException("IDが含まれていません！")}
+        when (updateType) {
+            UpdateType.GOOD -> pokemonBuildRepository.updateGood(itemIds[0], pokemonId, authId)
+            UpdateType.EV -> pokemonBuildRepository.updateEv(itemIds, pokemonId, authId)
+            UpdateType.ABILITY -> pokemonBuildRepository.updateAbility(itemIds[0], pokemonId, authId)
+            UpdateType.NATURE -> pokemonBuildRepository.updateNature(itemIds[0], pokemonId, authId)
+            UpdateType.TAG -> pokemonBuildRepository.updateTag(itemIds, pokemonId, authId)
+            UpdateType.MOVE -> pokemonBuildRepository.updateMove(itemIds, pokemonId, authId)
+        }
+    }
+
+    fun updateGrownPokemonByValue(id: Int, authId: String, values: List<String>, updateType: UpdateType) = transaction {
+        if (values.isEmpty()) {throw IllegalArgumentException("値が含まれていません！")}
+        when (updateType) {
+            UpdateType.GOOD -> pokemonBuildRepository.updateGoodByValue(values[0], id, authId)
+            UpdateType.EV -> throw IllegalArgumentException("EVはIDで更新してください！")
+            UpdateType.ABILITY -> pokemonBuildRepository.updateAbilityByValue(values[0], id, authId)
+            UpdateType.NATURE -> pokemonBuildRepository.updateNatureByValue(values[0], id, authId)
+            UpdateType.TAG -> pokemonBuildRepository.updateTagByValue(values, id, authId)
+            UpdateType.MOVE -> pokemonBuildRepository.updateMovesByValue(values, id, authId)
+        }
     }
 }
