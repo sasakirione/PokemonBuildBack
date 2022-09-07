@@ -84,14 +84,14 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun getGrownPokemon(pokemonId: Int, authId: String): GrownPokemon {
         checkGrownPokemon(authId, pokemonId)
-        val pokemon = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).innerJoin(Abilities).select { GrownPokemons.id eq pokemonId }
+        val pokemon = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).select { GrownPokemons.id eq pokemonId }
         return convertGrownPokemon(pokemon.first())
     }
 
     override fun getGrownPokemonList(authId: String): List<GrownPokemon> {
         checkUser(authId)
         val userId = getUserIdFromAuthId(authId)
-        val pokemonList = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).innerJoin(Abilities)
+        val pokemonList = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
             .select { GrownPokemons.user eq userId }
         return pokemonList.map { convertGrownPokemon(it) }
     }
@@ -236,7 +236,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun updateTagByValue(tagNames: List<String>, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
         val tags = PokemonTags.select { PokemonTags.name.inList(tagNames) }.map { it[PokemonTags.id] }.toList()
-        PokemonTagMap.deleteWhere { (PokemonTagMap.pokemon eq pokemonId) and (PokemonTagMap.tag.notInList(tags)) }
+        PokemonTagMap.deleteWhere { PokemonTagMap.pokemon eq pokemonId }
         tags.filter { tag ->
             PokemonTagMap.select { (PokemonTagMap.pokemon eq pokemonId) and (PokemonTagMap.tag eq tag) }.count() < 1
         }

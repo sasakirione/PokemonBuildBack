@@ -144,7 +144,7 @@ fun Route.pokemonBuildRoute() {
                 }
             }
 
-            route("grown-pokemon") {
+            route("grown-pokemons") {
                 get {
                     val principal = call.authentication.principal<JWTPrincipal>()
                     val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@get call.respond(
