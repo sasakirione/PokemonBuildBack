@@ -194,7 +194,7 @@ interface IPokemonBuildRepository {
      * @param build 作成する構築情報
      * @param authId 認証ID
      */
-    fun createBuild(build: BuildWithoutPokemonList, authId: String)
+    fun createBuild(build: BuildWithoutPokemonList, authId: String): Int
 
     /**
      * 指定された構築の構築情報(名前、コメント等)を更新する

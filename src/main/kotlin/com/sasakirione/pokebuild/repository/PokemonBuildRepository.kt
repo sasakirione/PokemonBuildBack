@@ -195,7 +195,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         } else {
             it[good] = 1
         }
-        it[user] = Users.select { Users.authId eq authId }.map { row -> row[id] }[0].value
+        it[user] = getUserIdFromAuthId(authId)
     } get GrownPokemons.id
 
     override fun updateGood(goodId: Int, pokemonId: Int, authId: String) {
@@ -297,14 +297,14 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         }
     }
 
-    override fun createBuild(build: BuildWithoutPokemonList, authId: String) {
+    override fun createBuild(build: BuildWithoutPokemonList, authId: String): Int {
         checkUser(authId)
         val userId = getUserIdFromAuthId(authId)
-        PokemonBuilds.insert {
+        return (PokemonBuilds.insert {
             it[name] = build.name
             it[comment] = build.comment
             it[user] = userId
-        }
+        } get PokemonBuilds.id).value
     }
 
     override fun updateBuild(id: Int, build: BuildWithoutPokemonList, authId: String) {
