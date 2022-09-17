@@ -7,7 +7,6 @@ import org.koin.core.component.inject
 class PokemonDataController : KoinComponent {
     private val useCase: PokemonDataUseCase by inject()
 
-    fun getPokemonNameList(input: String) = PokemonNameList(useCase.getPokemonNameList(input))
     fun getPokemon(id: Int) = useCase.getPokemonData(id)
 
     fun getGoods() = ResponseGoods(useCase.getGoods().map { ResponseGood(it.first, it.second) })
@@ -18,10 +17,6 @@ class PokemonDataController : KoinComponent {
 
     fun getPokemonList() = useCase.getPokemonList()
 }
-
-data class PokemonNameList(
-    val nameList: List<String>
-)
 
 data class ResponseGoods(
     val goods: List<ResponseGood>

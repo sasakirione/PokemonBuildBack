@@ -1,9 +1,11 @@
 package com.sasakirione.pokebuild
 
 import com.auth0.jwk.JwkProviderBuilder
-import com.sasakirione.pokebuild.controller.*
 import com.sasakirione.pokebuild.entity.*
+import com.sasakirione.pokebuild.plugins.MasterCache
 import com.sasakirione.pokebuild.plugins.moduleA
+import com.sasakirione.pokebuild.plugins.pokemonBuildRoute
+import com.sasakirione.pokebuild.plugins.pokemonDataRoute
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
@@ -11,16 +13,14 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.environmentProperties
 import org.koin.fileProperties
 import org.koin.ktor.ext.getProperty
-import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import java.util.concurrent.TimeUnit
 
@@ -54,6 +54,7 @@ fun Application.module() {
         allowHeader("Content-Type")
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Put)
         allowCredentials = true
     }
 
@@ -78,140 +79,43 @@ fun Application.module() {
         user = getProperty("db.user") ?: "sasakirione",
         password = getProperty("db.password") ?: "password"
     )
-
-    transaction {
-        SchemaUtils.create(Abilities)
-        SchemaUtils.create(GameVersions)
-        SchemaUtils.create(Goods)
-        SchemaUtils.create(GrownPokemons)
-        SchemaUtils.create(Moves)
-        SchemaUtils.create(MoveSelects)
-        SchemaUtils.create(Natures)
-        SchemaUtils.create(PokemonAbilityMap)
-        SchemaUtils.create(PokemonBuildMap)
-        SchemaUtils.create(PokemonBuilds)
-        SchemaUtils.create(PokemonMoveMap)
-        SchemaUtils.create(Pokemons)
-        SchemaUtils.create(PokemonTagMap)
-        SchemaUtils.create(PokemonTags)
-        SchemaUtils.create(PokemonTypeMap)
-        SchemaUtils.create(Types)
-        SchemaUtils.create(Users)
-    }
+    dbMigration()
+    setCache()
     routing {
-        val pokemonDataController: PokemonDataController by inject()
-        val pokemonBuildController: PokemonBuildController by inject()
-
         route("v1") {
-            route("pokemon_data") {
-                get("/{id}") {
-                    val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
-                    call.respond(pokemonDataController.getPokemon(id))
-                }
-                route("suggest_list") {
-                    get("/{input}") {
-                        val input = call.parameters["input"] ?: return@get call.respond(HttpStatusCode.BadRequest)
-                        call.respond(pokemonDataController.getPokemonNameList(input))
-                    }
-                }
-                get("get_goods") {
-                    call.respond(pokemonDataController.getGoods())
-                }
-                get("get_tags") {
-                    call.respond(pokemonDataController.getTags())
-                }
-                get("get_moves") {
-                    call.respond(pokemonDataController.getMoves())
-                }
-                get("pokemon_list") {
-                    call.respond(pokemonDataController.getPokemonList())
-                }
-            }
-            authenticate {
-                route("pokemon_build") {
-                    get("get_build") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@get call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        call.respond(pokemonBuildController.getBuild(authId))
-                    }
-
-                    post("post_pokemon") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        val inParams = call.receive<PostInsertPokemon>()
-                        call.respond(pokemonBuildController.insertPokemon(inParams, authId))
-                    }
-
-                    post("post_good") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        val inParams = call.receive<PostUpdateGood>()
-                        call.respond(pokemonBuildController.updateGood(inParams, authId))
-                    }
-
-                    post("post_ev") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        val inParams = call.receive<PostUpdateEv>()
-                        call.respond(pokemonBuildController.updateEv(inParams, authId))
-                    }
-
-                    post("post_tag") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        val inParams = call.receive<PostUpdateTag>()
-                        call.respond(pokemonBuildController.updateTag(inParams, authId))
-                    }
-
-                    post("post_moves") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        val inParams = call.receive<PostUpdateMoves>()
-                        call.respond(pokemonBuildController.updateMoves(inParams, authId))
-                    }
-
-                    post("post_ability") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        val inParams = call.receive<PostUpdateAbility>()
-                        call.respond(pokemonBuildController.updateAbility(inParams, authId))
-                    }
-
-                    post("post_nature") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        val inParams = call.receive<PostUpdateNature>()
-                        call.respond(pokemonBuildController.updateNature(inParams, authId))
-                    }
-
-                    delete("delete_pokemon") {
-                        val principal = call.authentication.principal<JWTPrincipal>()
-                        val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@delete call.respond(
-                            HttpStatusCode.BadRequest
-                        )
-                        val inParams = call.receive<PostDeletePokemon>()
-                        call.respond(pokemonBuildController.deletePokemon(inParams, authId))
-                    }
-
-                }
-            }
+            pokemonDataRoute()
+            pokemonBuildRoute()
         }
     }
+}
 
+private fun dbMigration() = transaction {
+    SchemaUtils.create(Abilities)
+    SchemaUtils.create(GameVersions)
+    SchemaUtils.create(Goods)
+    SchemaUtils.create(GrownPokemons)
+    SchemaUtils.create(Moves)
+    SchemaUtils.create(MoveSelects)
+    SchemaUtils.create(Natures)
+    SchemaUtils.create(PokemonAbilityMap)
+    SchemaUtils.create(PokemonBuildMap)
+    SchemaUtils.create(PokemonBuilds)
+    SchemaUtils.create(PokemonMoveMap)
+    SchemaUtils.create(Pokemons)
+    SchemaUtils.create(PokemonTagMap)
+    SchemaUtils.create(PokemonTags)
+    SchemaUtils.create(PokemonTypeMap)
+    SchemaUtils.create(Types)
+    SchemaUtils.create(Users)
+}
+
+private fun setCache() = transaction {
+    MasterCache.abilities = Abilities.selectAll().map { it[Abilities.id].value to it[Abilities.name] }.toList()
+    MasterCache.goods = Goods.selectAll().map { it[Goods.id].value to it[Goods.name] }.toList()
+    MasterCache.moves = Moves.selectAll().map { it[Moves.id].value to it[Moves.name] }.toList()
+    MasterCache.natures = Natures.selectAll().map { it[Natures.id].value to it[Natures.name] }.toList()
+    MasterCache.tags = PokemonTags.selectAll().map { it[PokemonTags.id].value to it[PokemonTags.name] }.toList()
+    MasterCache.types = Types.selectAll().map { it[Types.id].value to it[Types.name] }.toList()
+    MasterCache.abilityMap = PokemonAbilityMap.selectAll().map { it[PokemonAbilityMap.pokemon].value to it[PokemonAbilityMap.ability].value }.toList()
+    MasterCache.simplePokemons = Pokemons.selectAll().map { it[Pokemons.id].value to (it[Pokemons.name] + " " +( it[Pokemons.formName] ?: "")) }.toList()
 }
