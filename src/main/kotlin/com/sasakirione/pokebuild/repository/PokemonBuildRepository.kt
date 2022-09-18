@@ -148,7 +148,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             ),
         good = it[Goods.name],
         tag = PokemonTagMap.innerJoin(PokemonTags)
-            .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name] }
+            .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name]},
+        nickname = it[GrownPokemons.comment] ?: ""
     )
 
     override fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int {
@@ -345,6 +346,13 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
             .select { (PokemonBuildMap.build eq buildId) and (PokemonBuildMap.pokemon eq pokemonId) }
         return query.map { row -> convertGrownPokemon(row) }[0]
+    }
+
+    override fun updateNickname(nickname: String, pokemonId: Int, authId: String) {
+        checkGrownPokemon(authId, pokemonId)
+        GrownPokemons.update({ GrownPokemons.id eq pokemonId }) {
+            it[comment] = nickname
+        }
     }
 
     private fun checkUserBuild(id: Int, authId: String) {

@@ -40,6 +40,7 @@ class PokemonBuildUseCase : KoinComponent {
                 UpdateType.NATURE -> pokemonBuildRepository.updateNature(itemIds[0], pokemonId, authId)
                 UpdateType.TAG -> pokemonBuildRepository.updateTag(itemIds, pokemonId, authId)
                 UpdateType.MOVE -> pokemonBuildRepository.updateMove(itemIds, pokemonId, authId)
+                UpdateType.NICKNAME -> throw IllegalArgumentException("ニックネームはIDで更新できません！")
             }
         }
 
@@ -54,6 +55,7 @@ class PokemonBuildUseCase : KoinComponent {
             UpdateType.NATURE -> pokemonBuildRepository.updateNatureByValue(values[0], id, authId)
             UpdateType.TAG -> pokemonBuildRepository.updateTagByValue(values, id, authId)
             UpdateType.MOVE -> pokemonBuildRepository.updateMovesByValue(values, id, authId)
+            UpdateType.NICKNAME -> pokemonBuildRepository.updateNickname(values[0], id, authId)
         }
     }
 

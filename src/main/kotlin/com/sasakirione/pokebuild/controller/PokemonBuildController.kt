@@ -31,6 +31,7 @@ class PokemonBuildController : KoinComponent {
                 4 -> UpdateType.MOVE
                 5 -> UpdateType.NATURE
                 6 -> UpdateType.TAG
+                7 -> UpdateType.NICKNAME
                 else -> throw IllegalArgumentException("存在しない項目を更新しようとしています")
             }
         )
@@ -44,6 +45,7 @@ class PokemonBuildController : KoinComponent {
                 4 -> UpdateType.MOVE
                 5 -> UpdateType.NATURE
                 6 -> UpdateType.TAG
+                7 -> UpdateType.NICKNAME
                 else -> throw IllegalArgumentException("存在しない項目を更新しようとしています")
             }
         )
@@ -94,5 +96,5 @@ data class ResponseInsertPokemon(val pokemonId: Int)
 data class PostInsertPokemon(val pokemon: GrownPokemon, val buildId: Int)
 
 enum class UpdateType {
-    GOOD, EV, ABILITY, TAG, NATURE, MOVE
+    GOOD, EV, ABILITY, TAG, NATURE, MOVE, NICKNAME
 }

@@ -240,4 +240,6 @@ interface IPokemonBuildRepository {
      * @return 指定の育成済みポケモンの情報
      */
     fun getPokemonByIdFromBuild(buildId: Int, pokemonId: Int, authId: String): GrownPokemon
+
+    fun updateNickname(nickname: String, pokemonId: Int, authId: String)
 }
