@@ -107,6 +107,7 @@ private fun dbMigration() = transaction {
     SchemaUtils.create(Users)
     // v0.3.0
     SchemaUtils.create(UserSettings)
+    SchemaUtils.create(PublicBuilds)
 }
 
 private fun setCache() = transaction {

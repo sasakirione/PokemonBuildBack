@@ -79,6 +79,18 @@ class PokemonBuildController : KoinComponent {
 
     fun getPokemonByIdFromBuild(buildId: Int, pokemonId: Int, authId: String) =
         useCase.getPokemonByIdFromBuild(buildId, pokemonId, authId)
+
+    fun getPublicBuild(buildId: Int) =
+        useCase.getPublicBuild(buildId)
+
+    fun makePublicBuild(buildId: Int, authId: String) =
+        useCase.makeBuildPublic(buildId, authId)
+
+    fun makePrivateBuild(buildId: Int, authId: String) =
+        useCase.makeBuildPrivate(buildId, authId)
+
+    fun isPublicBuild(buildId: Int) =
+        useCase.isPublicBuild(buildId)
 }
 
 data class PostUpdateGrownPokemon(
