@@ -2,10 +2,7 @@ package com.sasakirione.pokebuild
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.sasakirione.pokebuild.entity.*
-import com.sasakirione.pokebuild.plugins.MasterCache
-import com.sasakirione.pokebuild.plugins.moduleA
-import com.sasakirione.pokebuild.plugins.pokemonBuildRoute
-import com.sasakirione.pokebuild.plugins.pokemonDataRoute
+import com.sasakirione.pokebuild.plugins.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
@@ -85,6 +82,7 @@ fun Application.module() {
         route("v1") {
             pokemonDataRoute()
             pokemonBuildRoute()
+            userRoute()
         }
     }
 }
@@ -107,6 +105,9 @@ private fun dbMigration() = transaction {
     SchemaUtils.create(PokemonTypeMap)
     SchemaUtils.create(Types)
     SchemaUtils.create(Users)
+    // v0.3.0
+    SchemaUtils.create(UserSettings)
+    SchemaUtils.create(PublicBuilds)
 }
 
 private fun setCache() = transaction {

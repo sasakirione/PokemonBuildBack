@@ -202,5 +202,39 @@ fun Route.pokemonBuildRoute() {
                 }
             }
         }
+        route("public-build/{id}") {
+            post("on") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                    ?: return@post call.respond(HttpStatusCode.BadRequest)
+                val principal = call.authentication.principal<JWTPrincipal>()
+                val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                    HttpStatusCode.BadRequest
+                )
+                call.respond(pokemonBuildController.makePublicBuild(id, authId))
+            }
+            post("off") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                    ?: return@post call.respond(HttpStatusCode.BadRequest)
+                val principal = call.authentication.principal<JWTPrincipal>()
+                val authId = principal?.payload?.getClaim("sub")?.asString() ?: return@post call.respond(
+                    HttpStatusCode.BadRequest
+                )
+                call.respond(pokemonBuildController.makePrivateBuild(id, authId))
+            }
+        }
+    }
+
+    route("public-build"){
+        route("{id}") {
+            get { val id =
+                call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                call.respond(pokemonBuildController.getPublicBuild(id))
+            }
+            get("is-public") {
+                val id =
+                    call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
+                call.respond(pokemonBuildController.isPublicBuild(id))
+            }
+        }
     }
 }

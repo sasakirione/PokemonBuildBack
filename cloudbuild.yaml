@@ -1,0 +1,35 @@
+steps:
+  - name: 'gradle:7.5.0-jdk17'
+    args:
+      - shadowJar
+    entrypoint: gradle
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - gcr.io/pokebuild/pokebuild-buck
+      - '--build-arg'
+      - _JAR_PATH=JAR_FILE=build/libs/PokemonBuild-0.2.0-all.jar
+      - _DB_PATH=$_DB_PATH
+      - _DB_USER=$_DB_USER
+      - _DB_PASS=$_DB_PASS
+      - _AUTH0_ISSUER=$_AUTH0_ISSUER
+      - _AUTH0_AUDIENCE=$_AUTH0_AUDIENCE
+      - _AUTH0_SECRET=$_AUTH0_SECRET
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - gcr.io/pokebuild/pokebuild-buck
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    args:
+      - run
+      - deploy
+      - pokemonbuildback
+      - '--image'
+      - gcr.io/pokebuild/pokebuild-buck
+      - '--region'
+      - asia-northeast1
+    entrypoint: gcloud
+images:
+  - gcr.io/pokebuild/pokebuild-buck

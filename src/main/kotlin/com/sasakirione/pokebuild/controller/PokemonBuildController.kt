@@ -31,6 +31,7 @@ class PokemonBuildController : KoinComponent {
                 4 -> UpdateType.MOVE
                 5 -> UpdateType.NATURE
                 6 -> UpdateType.TAG
+                7 -> UpdateType.NICKNAME
                 else -> throw IllegalArgumentException("存在しない項目を更新しようとしています")
             }
         )
@@ -44,6 +45,7 @@ class PokemonBuildController : KoinComponent {
                 4 -> UpdateType.MOVE
                 5 -> UpdateType.NATURE
                 6 -> UpdateType.TAG
+                7 -> UpdateType.NICKNAME
                 else -> throw IllegalArgumentException("存在しない項目を更新しようとしています")
             }
         )
@@ -77,6 +79,18 @@ class PokemonBuildController : KoinComponent {
 
     fun getPokemonByIdFromBuild(buildId: Int, pokemonId: Int, authId: String) =
         useCase.getPokemonByIdFromBuild(buildId, pokemonId, authId)
+
+    fun getPublicBuild(buildId: Int) =
+        useCase.getPublicBuild(buildId)
+
+    fun makePublicBuild(buildId: Int, authId: String) =
+        useCase.makeBuildPublic(buildId, authId)
+
+    fun makePrivateBuild(buildId: Int, authId: String) =
+        useCase.makeBuildPrivate(buildId, authId)
+
+    fun isPublicBuild(buildId: Int) =
+        useCase.isPublicBuild(buildId)
 }
 
 data class PostUpdateGrownPokemon(
@@ -94,5 +108,5 @@ data class ResponseInsertPokemon(val pokemonId: Int)
 data class PostInsertPokemon(val pokemon: GrownPokemon, val buildId: Int)
 
 enum class UpdateType {
-    GOOD, EV, ABILITY, TAG, NATURE, MOVE
+    GOOD, EV, ABILITY, TAG, NATURE, MOVE, NICKNAME
 }

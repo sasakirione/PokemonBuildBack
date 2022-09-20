@@ -6,6 +6,7 @@ import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.entity.GrownPokemons.good
 import com.sasakirione.pokebuild.plugins.MasterCache
+import io.ktor.server.plugins.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
@@ -63,6 +64,10 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun getBuild(id: Int, authId: String): Build {
         checkUserBuild(id, authId)
+        return getBuild(id)
+    }
+
+    private fun getBuild(id: Int): Build {
         val build =
             PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
                 .innerJoin(Pokemons).select((PokemonBuildMap.build eq id))
@@ -148,7 +153,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             ),
         good = it[Goods.name],
         tag = PokemonTagMap.innerJoin(PokemonTags)
-            .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name] }
+            .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name]},
+        nickname = it[GrownPokemons.comment] ?: ""
     )
 
     override fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int {
@@ -345,6 +351,46 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
             .select { (PokemonBuildMap.build eq buildId) and (PokemonBuildMap.pokemon eq pokemonId) }
         return query.map { row -> convertGrownPokemon(row) }[0]
+    }
+
+    override fun updateNickname(nickname: String, pokemonId: Int, authId: String) {
+        checkGrownPokemon(authId, pokemonId)
+        GrownPokemons.update({ GrownPokemons.id eq pokemonId }) {
+            it[comment] = nickname
+        }
+    }
+
+    override fun getPublicBuild(buildId: Int): Build {
+        val isPublic = PublicBuilds.select { (PublicBuilds.build eq buildId) and (PublicBuilds.isPublic eq true) }.count() > 0
+        if (!isPublic) {
+            throw NotFoundException("公開されていないビルドです")
+        }
+        return getBuild(buildId)
+    }
+
+    override fun makeBuildPublic(buildId: Int, authId: String) {
+        checkUserBuild(buildId, authId)
+        val isExist = PublicBuilds.select { PublicBuilds.build eq buildId }.count() > 0
+        if (!isExist) {
+            PublicBuilds.insert {
+                it[build] = buildId
+                it[isPublic] = true
+            }
+        } else {
+            PublicBuilds.update({ PublicBuilds.build eq buildId}) { it[isPublic] = true }
+        }
+    }
+
+    override fun makeBuildPrivate(buildId: Int, authId: String) {
+        checkUserBuild(buildId, authId)
+        val isExist = PublicBuilds.select { PublicBuilds.build eq buildId }.count() > 0
+        if (isExist) {
+            PublicBuilds.update({ PublicBuilds.build eq buildId}) { it[isPublic] = false }
+        }
+    }
+
+    override fun isPublicBuild(buildId: Int): Boolean {
+        return PublicBuilds.select { (PublicBuilds.build eq buildId) and (PublicBuilds.isPublic eq true) }.count() > 0
     }
 
     private fun checkUserBuild(id: Int, authId: String) {
