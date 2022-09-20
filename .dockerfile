@@ -1,6 +1,5 @@
 FROM amazoncorretto:17
 
-ARG _JAR_PATH
 ARG _DB_PATH
 ARG _DB_USER
 ARG _DB_PASS
