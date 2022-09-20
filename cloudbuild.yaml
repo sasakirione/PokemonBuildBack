@@ -9,7 +9,6 @@ steps:
       - '-t'
       - gcr.io/pokebuild/pokebuild-buck
       - '--build-arg'
-      - _JAR_PATH=JAR_FILE=build/libs/PokemonBuild-0.2.0-all.jar
       - _DB_PATH=$_DB_PATH
       - _DB_USER=$_DB_USER
       - _DB_PASS=$_DB_PASS
