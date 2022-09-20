@@ -10,10 +10,15 @@ steps:
       - gcr.io/pokebuild/pokebuild-buck
       - '--build-arg'
       - _DB_PATH=$_DB_PATH
+      - '--build-arg'
       - _DB_USER=$_DB_USER
+      - '--build-arg'
       - _DB_PASS=$_DB_PASS
+      - '--build-arg'
       - _AUTH0_ISSUER=$_AUTH0_ISSUER
+      - '--build-arg'
       - _AUTH0_AUDIENCE=$_AUTH0_AUDIENCE
+      - '--build-arg'
       - _AUTH0_SECRET=$_AUTH0_SECRET
       - .
   - name: gcr.io/cloud-builders/docker
