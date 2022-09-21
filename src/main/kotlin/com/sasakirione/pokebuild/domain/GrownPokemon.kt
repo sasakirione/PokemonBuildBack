@@ -13,5 +13,5 @@ data class GrownPokemon(
     val moveList: List<String>,
     val good: String,
     val tag: List<String>,
-    val nickname: String
+    val nickname: String?
 )
