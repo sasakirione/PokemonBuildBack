@@ -294,6 +294,12 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun getBuildList(authId: String): List<BuildWithoutPokemonList> {
         val userId = getUserIdFromAuthId(authId)
         val query = PokemonBuilds.select { PokemonBuilds.user eq userId }
+        if (query.count() < 1) {
+            PokemonBuilds.insert {
+                it[user] = userId
+                it[name] = "デフォルトのビルド"
+            }
+        }
         return query.map { row ->
             BuildWithoutPokemonList(
                 row[PokemonBuilds.id].value,
