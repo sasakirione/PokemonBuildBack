@@ -91,6 +91,9 @@ class PokemonBuildController : KoinComponent {
 
     fun isPublicBuild(buildId: Int) =
         useCase.isPublicBuild(buildId)
+
+    fun getPublicBuildList() =
+        useCase.getPublicBuildList()
 }
 
 data class PostUpdateGrownPokemon(

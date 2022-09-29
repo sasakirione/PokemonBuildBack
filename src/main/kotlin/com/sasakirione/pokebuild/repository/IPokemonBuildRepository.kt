@@ -250,4 +250,6 @@ interface IPokemonBuildRepository {
     fun makeBuildPrivate(buildId: Int, authId: String)
 
     fun isPublicBuild(buildId: Int): Boolean
+
+    fun getPublicBuildList(): List<Int>
 }
