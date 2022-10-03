@@ -115,4 +115,8 @@ class PokemonBuildUseCase : KoinComponent {
         pokemonBuildRepository.isPublicBuild(buildId)
     }
 
+    fun getPublicBuildList() = transaction {
+        pokemonBuildRepository.getPublicBuildList()
+    }
+
 }

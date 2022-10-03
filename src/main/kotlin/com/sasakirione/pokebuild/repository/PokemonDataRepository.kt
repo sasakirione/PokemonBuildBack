@@ -39,5 +39,12 @@ class PokemonDataRepository : IPokemonDataRepository {
     override fun getMoves(): List<Pair<Int, String>> = MasterCache.moves
 
     override fun getPokemonList(): List<Pair<Int, String>> = MasterCache.simplePokemons
+    override fun getPokemonMove(pokemonId: Int): List<Int> {
+        val moveList = PokemonMoveMap.select { PokemonMoveMap.pokemon eq pokemonId }.map { it[PokemonMoveMap.move].value }
+
+        return moveList.ifEmpty {
+            listOf(0)
+        }
+    }
 
 }

@@ -399,6 +399,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         return PublicBuilds.select { (PublicBuilds.build eq buildId) and (PublicBuilds.isPublic eq true) }.count() > 0
     }
 
+    override fun getPublicBuildList(): List<Int> = PublicBuilds.select { PublicBuilds.isPublic eq true }.map { it[PublicBuilds.build].value }
+
     private fun checkUserBuild(id: Int, authId: String) {
         val exist = PokemonBuilds.innerJoin(Users).select { (Users.authId eq authId) and (PokemonBuilds.id eq id) }
             .count() > 0

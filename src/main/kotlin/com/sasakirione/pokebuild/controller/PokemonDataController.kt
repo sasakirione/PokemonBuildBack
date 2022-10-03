@@ -16,6 +16,8 @@ class PokemonDataController : KoinComponent {
     fun getMoves() = useCase.getMoves()
 
     fun getPokemonList() = useCase.getPokemonList()
+
+    fun getPokemonMove(pokemonId: Int) = useCase.getPokemonMove(pokemonId)
 }
 
 data class ResponseGoods(
