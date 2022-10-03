@@ -22,7 +22,7 @@ fun Route.pokemonDataRoute() {
                 }
                 get("moves") {
                     val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)
-                    // call.respond(pokemonDataController.getPokemonMoves(id))
+                    call.respond(pokemonDataController.getPokemonMove(id))
                 }
                 get("abilities") {
                     val id = call.parameters["id"]?.toInt() ?: return@get call.respond(HttpStatusCode.BadRequest)

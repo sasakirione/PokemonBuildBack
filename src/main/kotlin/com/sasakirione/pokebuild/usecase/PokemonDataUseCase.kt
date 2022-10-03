@@ -28,4 +28,8 @@ class PokemonDataUseCase : KoinComponent {
         pokemonDataRepository.getPokemonList()
     }
 
+    fun getPokemonMove(pokemonId: Int) = transaction {
+        pokemonDataRepository.getPokemonMove(pokemonId)
+    }
+
 }

@@ -39,4 +39,6 @@ interface IPokemonDataRepository {
      * @return ポケモン名とIDのTupleのリスト
      */
     fun getPokemonList(): List<Pair<Int, String>>
+
+    fun getPokemonMove(pokemonId: Int): List<Int>
 }
