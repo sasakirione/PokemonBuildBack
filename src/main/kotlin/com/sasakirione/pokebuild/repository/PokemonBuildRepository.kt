@@ -155,7 +155,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         tag = PokemonTagMap.innerJoin(PokemonTags)
             .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name]},
         nickname = it[GrownPokemons.comment] ?: "",
-        terastal = TerastalMap.innerJoin(Types).select { TerastalMap.pokemonId eq it[GrownPokemons.id].value }.map { row -> row[Types.name] }.first(),
+        terastal = TerastalMap.innerJoin(Types).select { TerastalMap.pokemonId eq it[GrownPokemons.id].value }.map { row -> row[Types.name] }.firstOrNull(),
     )
 
     override fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int {
@@ -169,6 +169,12 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         PokemonBuildMap.insert {
             it[build] = buildId
             it[PokemonBuildMap.pokemon] = pokemonId
+        }
+        if (pokemon.terastal != null) {
+            TerastalMap.insert {
+                it[TerastalMap.pokemonId] = pokemonId
+                it[type] = MasterCache.getTypeId(pokemon.terastal)
+            }
         }
         return pokemonId.value
     }
