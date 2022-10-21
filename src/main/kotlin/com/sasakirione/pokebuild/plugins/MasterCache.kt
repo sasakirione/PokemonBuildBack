@@ -30,4 +30,8 @@ object MasterCache {
 
     fun getMoveNameList(moveIdList: List<Int>): List<String> =
         moveIdList.map { moves.first { x -> x.first == it }.second }
+
+    fun getType(value: Int): String {
+        return types.first { it.first == value }.second
+    }
 }
