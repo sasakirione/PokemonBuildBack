@@ -16,5 +16,5 @@ ENV AUTH0_ISSUER ${_AUTH0_ISSUER}
 ENV AUTH0_AUDIENCE ${_AUTH0_AUDIENCE}
 ENV AUTH0_SECRET ${_AUTH0_SECRET}
 
-COPY build/libs/PokemonBuild-0.2.1-all.jar app.jar
+COPY build/libs/PokemonBuild-0.4.0-all.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
