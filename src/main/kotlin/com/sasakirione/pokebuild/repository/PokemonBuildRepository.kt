@@ -70,7 +70,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     private fun getBuild(id: Int): Build {
         val build =
             PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(PokemonBuilds).innerJoin(Goods).innerJoin(Abilities)
-                .innerJoin(Pokemons).innerJoin(TerastalMap).select((PokemonBuildMap.build eq id))
+                .innerJoin(Pokemons).select((PokemonBuildMap.build eq id))
         val pokemonList = build.map { convertGrownPokemon(it) }
         val build2 = PokemonBuilds.select { PokemonBuilds.id eq id }.single()
         if (pokemonList.isEmpty()) {
@@ -89,14 +89,14 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun getGrownPokemon(pokemonId: Int, authId: String): GrownPokemon {
         checkGrownPokemon(authId, pokemonId)
-        val pokemon = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).innerJoin(TerastalMap).select { GrownPokemons.id eq pokemonId }
+        val pokemon = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).select { GrownPokemons.id eq pokemonId }
         return convertGrownPokemon(pokemon.first())
     }
 
     override fun getGrownPokemonList(authId: String): List<GrownPokemon> {
         checkUser(authId)
         val userId = getUserIdFromAuthId(authId)
-        val pokemonList = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).innerJoin(TerastalMap)
+        val pokemonList = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
             .select { GrownPokemons.user eq userId }
         return pokemonList.map { convertGrownPokemon(it) }
     }
@@ -155,7 +155,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         tag = PokemonTagMap.innerJoin(PokemonTags)
             .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name]},
         nickname = it[GrownPokemons.comment] ?: "",
-        terastal = MasterCache.getType(it[TerastalMap.type].value)
+        terastal = TerastalMap.innerJoin(Types).select { TerastalMap.pokemonId eq it[GrownPokemons.id].value }.map { row -> row[Types.name] }.first(),
     )
 
     override fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int {
@@ -338,7 +338,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun getPokemonListFromBuild(id: Int, authId: String): List<GrownPokemon> {
         checkUserBuild(id, authId)
-        val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).innerJoin(TerastalMap)
+        val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
             .select { (PokemonBuildMap.build eq id) and (PokemonBuildMap.pokemon eq GrownPokemons.id) }
         return query.map { row -> convertGrownPokemon(row) }
     }
@@ -355,7 +355,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun getPokemonByIdFromBuild(buildId: Int, pokemonId: Int, authId: String): GrownPokemon {
         checkUserBuild(buildId, authId)
         checkGrownPokemon(authId, pokemonId)
-        val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).innerJoin(TerastalMap)
+        val query = PokemonBuildMap.innerJoin(GrownPokemons).innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
             .select { (PokemonBuildMap.build eq buildId) and (PokemonBuildMap.pokemon eq pokemonId) }
         return query.map { row -> convertGrownPokemon(row) }[0]
     }
