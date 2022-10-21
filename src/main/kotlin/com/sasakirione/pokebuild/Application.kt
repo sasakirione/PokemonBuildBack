@@ -120,5 +120,6 @@ private fun setCache() = transaction {
     MasterCache.tags = PokemonTags.selectAll().map { it[PokemonTags.id].value to it[PokemonTags.name] }.toList()
     MasterCache.types = Types.selectAll().map { it[Types.id].value to it[Types.name] }.toList()
     MasterCache.abilityMap = PokemonAbilityMap.selectAll().map { it[PokemonAbilityMap.pokemon].value to it[PokemonAbilityMap.ability].value }.toList()
-    MasterCache.simplePokemons = Pokemons.selectAll().map { it[Pokemons.id].value to (it[Pokemons.name] + " " +( it[Pokemons.formName] ?: "")) }.toList()
+    MasterCache.simplePokemons = Pokemons.selectAll().orderBy(Pokemons.dexNo)
+        .map { it[Pokemons.id].value to (it[Pokemons.name] + " " +( it[Pokemons.formName] ?: "")) }.toList()
 }
