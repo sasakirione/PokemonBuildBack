@@ -252,4 +252,6 @@ interface IPokemonBuildRepository {
     fun isPublicBuild(buildId: Int): Boolean
 
     fun getPublicBuildList(): List<Int>
+    fun updateTerastal(id: Int, pokemonId: Int, authId: String)
+    fun updateTerastalByValue(value: String, id: Int, authId: String)
 }
