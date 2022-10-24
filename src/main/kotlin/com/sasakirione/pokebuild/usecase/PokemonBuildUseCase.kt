@@ -1,6 +1,7 @@
 package com.sasakirione.pokebuild.usecase
 
 import com.sasakirione.pokebuild.controller.UpdateType
+import com.sasakirione.pokebuild.controller.UpdateType.*
 import com.sasakirione.pokebuild.domain.BuildWithoutPokemonList
 import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.repository.IPokemonBuildRepository
@@ -34,13 +35,14 @@ class PokemonBuildUseCase : KoinComponent {
                 throw IllegalArgumentException("IDが含まれていません！")
             }
             when (updateType) {
-                UpdateType.GOOD -> pokemonBuildRepository.updateGood(itemIds[0], pokemonId, authId)
-                UpdateType.EV -> pokemonBuildRepository.updateEv(itemIds, pokemonId, authId)
-                UpdateType.ABILITY -> pokemonBuildRepository.updateAbility(itemIds[0], pokemonId, authId)
-                UpdateType.NATURE -> pokemonBuildRepository.updateNature(itemIds[0], pokemonId, authId)
-                UpdateType.TAG -> pokemonBuildRepository.updateTag(itemIds, pokemonId, authId)
-                UpdateType.MOVE -> pokemonBuildRepository.updateMove(itemIds, pokemonId, authId)
-                UpdateType.NICKNAME -> throw IllegalArgumentException("ニックネームはIDで更新できません！")
+                GOOD -> pokemonBuildRepository.updateGood(itemIds[0], pokemonId, authId)
+                EV -> pokemonBuildRepository.updateEv(itemIds, pokemonId, authId)
+                ABILITY -> pokemonBuildRepository.updateAbility(itemIds[0], pokemonId, authId)
+                NATURE -> pokemonBuildRepository.updateNature(itemIds[0], pokemonId, authId)
+                TAG -> pokemonBuildRepository.updateTag(itemIds, pokemonId, authId)
+                MOVE -> pokemonBuildRepository.updateMove(itemIds, pokemonId, authId)
+                NICKNAME -> throw IllegalArgumentException("ニックネームはIDで更新できません！")
+                TERASTAL -> pokemonBuildRepository.updateTerastal(itemIds[0], pokemonId, authId)
             }
         }
 
@@ -49,13 +51,14 @@ class PokemonBuildUseCase : KoinComponent {
             throw IllegalArgumentException("値が含まれていません！")
         }
         when (updateType) {
-            UpdateType.GOOD -> pokemonBuildRepository.updateGoodByValue(values[0], id, authId)
-            UpdateType.EV -> throw IllegalArgumentException("EVはIDで更新してください！")
-            UpdateType.ABILITY -> pokemonBuildRepository.updateAbilityByValue(values[0], id, authId)
-            UpdateType.NATURE -> pokemonBuildRepository.updateNatureByValue(values[0], id, authId)
-            UpdateType.TAG -> pokemonBuildRepository.updateTagByValue(values, id, authId)
-            UpdateType.MOVE -> pokemonBuildRepository.updateMovesByValue(values, id, authId)
-            UpdateType.NICKNAME -> pokemonBuildRepository.updateNickname(values[0], id, authId)
+            GOOD -> pokemonBuildRepository.updateGoodByValue(values[0], id, authId)
+            EV -> throw IllegalArgumentException("EVはIDで更新してください！")
+            ABILITY -> pokemonBuildRepository.updateAbilityByValue(values[0], id, authId)
+            NATURE -> pokemonBuildRepository.updateNatureByValue(values[0], id, authId)
+            TAG -> pokemonBuildRepository.updateTagByValue(values, id, authId)
+            MOVE -> pokemonBuildRepository.updateMovesByValue(values, id, authId)
+            NICKNAME -> pokemonBuildRepository.updateNickname(values[0], id, authId)
+            TERASTAL -> pokemonBuildRepository.updateTerastalByValue(values[0], id, authId)
         }
     }
 

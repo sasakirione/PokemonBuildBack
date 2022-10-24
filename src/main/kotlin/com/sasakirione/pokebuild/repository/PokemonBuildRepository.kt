@@ -5,6 +5,7 @@ import com.sasakirione.pokebuild.domain.BuildWithoutPokemonList
 import com.sasakirione.pokebuild.domain.GrownPokemon
 import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.entity.GrownPokemons.good
+import com.sasakirione.pokebuild.entity.TerastalMap.pokemonId
 import com.sasakirione.pokebuild.plugins.MasterCache
 import io.ktor.server.plugins.*
 import org.jetbrains.exposed.sql.*
@@ -155,7 +156,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         tag = PokemonTagMap.innerJoin(PokemonTags)
             .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name]},
         nickname = it[GrownPokemons.comment] ?: "",
-        terastal = TerastalMap.innerJoin(Types).select { TerastalMap.pokemonId eq it[GrownPokemons.id].value }.map { row -> row[Types.name] }.firstOrNull(),
+        terastal = TerastalMap.innerJoin(Types).select { pokemonId eq it[GrownPokemons.id].value }.map { row -> row[Types.name] }.firstOrNull(),
     )
 
     override fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int {
@@ -407,6 +408,25 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     }
 
     override fun getPublicBuildList(): List<Int> = PublicBuilds.select { PublicBuilds.isPublic eq true }.map { it[PublicBuilds.build].value }
+    override fun updateTerastal(id: Int, pokemonId: Int, authId: String) {
+        checkGrownPokemon(authId, pokemonId)
+        val isExist = TerastalMap.select { TerastalMap.id eq id }.count() > 0
+        if (isExist) {
+            TerastalMap.update({ TerastalMap.pokemonId eq pokemonId }) {
+                it[type] = id
+            }
+        } else {
+            TerastalMap.insert {
+                it[TerastalMap.pokemonId] = pokemonId
+                it[type] = id
+            }
+        }
+    }
+
+    override fun updateTerastalByValue(value: String, id: Int, authId: String) {
+        val typeId = MasterCache.getTypeId(value)
+        updateTerastal(typeId, id, authId)
+    }
 
     private fun checkUserBuild(id: Int, authId: String) {
         val exist = PokemonBuilds.innerJoin(Users).select { (Users.authId eq authId) and (PokemonBuilds.id eq id) }
