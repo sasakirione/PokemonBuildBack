@@ -110,6 +110,7 @@ private fun dbMigration() = transaction {
     SchemaUtils.create(PublicBuilds)
     // v0.4.0
     SchemaUtils.create(TerastalMap)
+    SchemaUtils.create(GoodDetails)
 }
 
 private fun setCache() = transaction {
