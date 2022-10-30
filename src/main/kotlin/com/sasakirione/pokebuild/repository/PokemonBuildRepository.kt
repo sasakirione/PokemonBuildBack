@@ -90,7 +90,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun getGrownPokemon(pokemonId: Int, authId: String): GrownPokemon {
         checkGrownPokemon(authId, pokemonId)
-        val pokemon = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods).select { GrownPokemons.id eq pokemonId }
+        val pokemon = GrownPokemons.innerJoin(Abilities).innerJoin(Pokemons).innerJoin(Goods)
+            .select { GrownPokemons.id eq pokemonId }
         return convertGrownPokemon(pokemon.first())
     }
 
@@ -145,18 +146,19 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             it[Pokemons.baseS]
         ),
         moveList = MasterCache.getMoveNameList(
-                listOf(
-                    it[GrownPokemons.move1]!!.value,
-                    it[GrownPokemons.move2]!!.value,
-                    it[GrownPokemons.move3]!!.value,
-                    it[GrownPokemons.move4]!!.value
-                )
-            ),
+            listOf(
+                it[GrownPokemons.move1]!!.value,
+                it[GrownPokemons.move2]!!.value,
+                it[GrownPokemons.move3]!!.value,
+                it[GrownPokemons.move4]!!.value
+            )
+        ),
         good = it[Goods.name],
         tag = PokemonTagMap.innerJoin(PokemonTags)
-            .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name]},
+            .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name] },
         nickname = it[GrownPokemons.comment] ?: "",
-        terastal = TerastalMap.innerJoin(Types).select { pokemonId eq it[GrownPokemons.id].value }.map { row -> row[Types.name] }.firstOrNull(),
+        terastal = TerastalMap.innerJoin(Types).select { pokemonId eq it[GrownPokemons.id].value }
+            .map { row -> row[Types.name] }.firstOrNull(),
     )
 
     override fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int {
@@ -375,7 +377,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     }
 
     override fun getPublicBuild(buildId: Int): Build {
-        val isPublic = PublicBuilds.select { (PublicBuilds.build eq buildId) and (PublicBuilds.isPublic eq true) }.count() > 0
+        val isPublic =
+            PublicBuilds.select { (PublicBuilds.build eq buildId) and (PublicBuilds.isPublic eq true) }.count() > 0
         if (!isPublic) {
             throw NotFoundException("公開されていないビルドです")
         }
@@ -391,7 +394,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
                 it[isPublic] = true
             }
         } else {
-            PublicBuilds.update({ PublicBuilds.build eq buildId}) { it[isPublic] = true }
+            PublicBuilds.update({ PublicBuilds.build eq buildId }) { it[isPublic] = true }
         }
     }
 
@@ -399,7 +402,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         checkUserBuild(buildId, authId)
         val isExist = PublicBuilds.select { PublicBuilds.build eq buildId }.count() > 0
         if (isExist) {
-            PublicBuilds.update({ PublicBuilds.build eq buildId}) { it[isPublic] = false }
+            PublicBuilds.update({ PublicBuilds.build eq buildId }) { it[isPublic] = false }
         }
     }
 
@@ -407,7 +410,9 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         return PublicBuilds.select { (PublicBuilds.build eq buildId) and (PublicBuilds.isPublic eq true) }.count() > 0
     }
 
-    override fun getPublicBuildList(): List<Int> = PublicBuilds.select { PublicBuilds.isPublic eq true }.map { it[PublicBuilds.build].value }
+    override fun getPublicBuildList(): List<Int> =
+        PublicBuilds.select { PublicBuilds.isPublic eq true }.map { it[PublicBuilds.build].value }
+
     override fun updateTerastal(id: Int, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
         val isExist = TerastalMap.select { TerastalMap.id eq id }.count() > 0
