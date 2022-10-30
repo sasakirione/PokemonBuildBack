@@ -224,14 +224,15 @@ fun Route.pokemonBuildRoute() {
         }
     }
 
-    route("public-build"){
+    route("public-build") {
         get {
             call.respond(pokemonBuildController.getPublicBuildList())
         }
 
         route("{id}") {
-            get { val id =
-                call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
+            get {
+                val id =
+                    call.parameters["id"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
                 call.respond(pokemonBuildController.getPublicBuild(id))
             }
             get("is-public") {

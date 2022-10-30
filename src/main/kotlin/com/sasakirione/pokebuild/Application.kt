@@ -110,6 +110,7 @@ private fun dbMigration() = transaction {
     SchemaUtils.create(PublicBuilds)
     // v0.4.0
     SchemaUtils.create(TerastalMap)
+    SchemaUtils.create(GoodDetails)
 }
 
 private fun setCache() = transaction {
@@ -119,7 +120,9 @@ private fun setCache() = transaction {
     MasterCache.natures = Natures.selectAll().map { it[Natures.id].value to it[Natures.name] }.toList()
     MasterCache.tags = PokemonTags.selectAll().map { it[PokemonTags.id].value to it[PokemonTags.name] }.toList()
     MasterCache.types = Types.selectAll().map { it[Types.id].value to it[Types.name] }.toList()
-    MasterCache.abilityMap = PokemonAbilityMap.selectAll().map { it[PokemonAbilityMap.pokemon].value to it[PokemonAbilityMap.ability].value }.toList()
+    MasterCache.abilityMap =
+        PokemonAbilityMap.selectAll().map { it[PokemonAbilityMap.pokemon].value to it[PokemonAbilityMap.ability].value }
+            .toList()
     MasterCache.simplePokemons = Pokemons.selectAll().orderBy(Pokemons.dexNo)
-        .map { it[Pokemons.id].value to (it[Pokemons.name] + " " +( it[Pokemons.formName] ?: "")) }.toList()
+        .map { it[Pokemons.id].value to (it[Pokemons.name] + " " + (it[Pokemons.formName] ?: "")) }.toList()
 }
