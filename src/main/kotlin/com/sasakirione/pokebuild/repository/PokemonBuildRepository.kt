@@ -39,7 +39,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun updateTag(tagId: List<Int>, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
-        PokemonTagMap.deleteWhere { PokemonTagMap.pokemon eq pokemonId }
+        PokemonTagMap.deleteWhere { pokemon eq pokemonId }
         PokemonTagMap.batchInsert(tagId) { id ->
             this[PokemonTagMap.pokemon] = pokemonId
             this[PokemonTagMap.tag] = id
@@ -111,7 +111,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun deletePokemonFromBuild(buildId: Int, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
-        PokemonBuildMap.deleteWhere { (PokemonBuildMap.build eq buildId) and (PokemonBuildMap.pokemon eq pokemonId) }
+        PokemonBuildMap.deleteWhere { (build eq buildId) and (pokemon eq pokemonId) }
     }
 
     private fun convertGrownPokemon(it: ResultRow) = GrownPokemon(
@@ -252,7 +252,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun updateTagByValue(tagNames: List<String>, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
         val tags = PokemonTags.select { PokemonTags.name.inList(tagNames) }.map { it[PokemonTags.id] }.toList()
-        PokemonTagMap.deleteWhere { PokemonTagMap.pokemon eq pokemonId }
+        PokemonTagMap.deleteWhere { pokemon eq pokemonId }
         tags.filter { tag ->
             PokemonTagMap.select { (PokemonTagMap.pokemon eq pokemonId) and (PokemonTagMap.tag eq tag) }.count() < 1
         }
@@ -296,8 +296,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun deletePokemon(pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
-        PokemonTagMap.deleteWhere { PokemonTagMap.pokemon eq pokemonId }
-        PokemonBuildMap.deleteWhere { PokemonBuildMap.pokemon eq pokemonId }
+        PokemonTagMap.deleteWhere { pokemon eq pokemonId }
+        PokemonBuildMap.deleteWhere { pokemon eq pokemonId }
         GrownPokemons.deleteWhere { GrownPokemons.id eq pokemonId }
     }
 
@@ -341,8 +341,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     override fun deleteBuild(id: Int, authId: String) {
         checkUserBuild(id, authId)
         val userId = getUserIdFromAuthId(authId)
-        PokemonBuildMap.deleteWhere { (PokemonBuildMap.build eq id) }
-        PokemonBuilds.deleteWhere { (PokemonBuilds.id eq id) and (PokemonBuilds.user eq userId) }
+        PokemonBuildMap.deleteWhere { (build eq id) }
+        PokemonBuilds.deleteWhere { (PokemonBuilds.id eq id) and (user eq userId) }
     }
 
     override fun getPokemonListFromBuild(id: Int, authId: String): List<GrownPokemon> {
@@ -415,7 +415,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun updateTerastal(id: Int, pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
-        val isExist = TerastalMap.select { TerastalMap.id eq id }.count() > 0
+        val isExist = TerastalMap.select { TerastalMap.pokemonId eq pokemonId }.count() > 0
         if (isExist) {
             TerastalMap.update({ TerastalMap.pokemonId eq pokemonId }) {
                 it[type] = id
@@ -429,8 +429,17 @@ class PokemonBuildRepository : IPokemonBuildRepository {
     }
 
     override fun updateTerastalByValue(value: String, id: Int, authId: String) {
+        if (value == "設定なし") {
+            deleteTerastal(id, authId)
+            return
+        }
         val typeId = MasterCache.getTypeId(value)
         updateTerastal(typeId, id, authId)
+    }
+
+    private fun deleteTerastal(pokemonId: Int, authId: String) {
+        checkGrownPokemon(authId, pokemonId)
+        TerastalMap.deleteWhere { TerastalMap.pokemonId eq pokemonId }
     }
 
     private fun checkUserBuild(id: Int, authId: String) {
