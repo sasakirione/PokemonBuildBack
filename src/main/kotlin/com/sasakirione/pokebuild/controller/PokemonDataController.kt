@@ -9,7 +9,7 @@ class PokemonDataController : KoinComponent {
 
     fun getPokemon(id: Int) = useCase.getPokemonData(id)
 
-    fun getGoods() = ResponseGoods(useCase.getGoods().map { ResponseGood(it.first, it.second) })
+    fun getGoods() = ResponseGoods(useCase.getGoods().map { ResponseGood(it.first, it.second, it.third) })
 
     fun getTags() = useCase.getTags()
 
@@ -26,5 +26,6 @@ data class ResponseGoods(
 
 data class ResponseGood(
     val id: Int,
-    val name: String
+    val name: String,
+    val detail: String
 )

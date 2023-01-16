@@ -32,7 +32,7 @@ class PokemonDataRepository : IPokemonDataRepository {
         )
     }
 
-    override fun getGoods(): List<Pair<Int, String>> = MasterCache.goods
+    override fun getGoods(): List<Triple<Int, String, String>> = MasterCache.goods
 
     override fun getTags(): List<String> = MasterCache.tags.map { it.second }
 
