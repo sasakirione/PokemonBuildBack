@@ -2,7 +2,7 @@ package com.sasakirione.pokebuild.plugins
 
 object MasterCache {
     var abilities = listOf<Pair<Int, String>>()
-    var goods = listOf<Pair<Int, String>>()
+    var goods = listOf<Triple<Int, String, String>>()
     var moves = listOf<Pair<Int, String>>()
     var natures = listOf<Pair<Int, String>>()
     var types = listOf<Pair<Int, String>>()

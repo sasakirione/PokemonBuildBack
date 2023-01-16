@@ -15,9 +15,9 @@ interface IPokemonDataRepository {
     /**
      * 道具の一覧をIDつきで取得する
      *
-     * @return 道具名とIDのTupleのリスト
+     * @return 道具名とIDと詳細のTripleのリスト
      */
-    fun getGoods(): List<Pair<Int, String>>
+    fun getGoods(): List<Triple<Int, String, String>>
 
     /**
      * ポケモン用のタグ一覧を取得する
