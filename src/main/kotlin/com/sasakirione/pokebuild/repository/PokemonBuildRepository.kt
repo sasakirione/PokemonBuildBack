@@ -173,7 +173,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             it[build] = buildId
             it[PokemonBuildMap.pokemon] = pokemonId
         }
-        if (pokemon.terastal != null) {
+        if (pokemon.terastal != null && pokemon.terastal != "選択なし") {
             TerastalMap.insert {
                 it[TerastalMap.pokemonId] = pokemonId
                 it[type] = MasterCache.getTypeId(pokemon.terastal)
