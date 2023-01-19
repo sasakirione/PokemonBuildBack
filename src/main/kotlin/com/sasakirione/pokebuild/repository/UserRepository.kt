@@ -24,7 +24,8 @@ class UserRepository: IUserRepository {
 
     override fun setSetting(setting: Setting, authId: String) {
         val userId = getUserIdFromAuthId(authId)
-        val existIsUsedNickname = UserSettings.select { UserSettings.userId eq userId }.count() == 0L
+        val settingList = UserSettings.select { UserSettings.userId eq userId }.toList()
+        val existIsUsedNickname = settingList.any { resultRow -> resultRow[UserSettings.settingId] == 1 }
         if (existIsUsedNickname) {
             UserSettings.insert {
                 it[UserSettings.userId] = userId
