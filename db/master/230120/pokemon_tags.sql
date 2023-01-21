@@ -1,0 +1,17 @@
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (1, '物理受け', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (2, '特殊受け', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (3, '物理アタッカー', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (4, '特殊アタッカー', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (5, 'ガチ両刀', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (6, '両受け', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (7, 'ダイマエース', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (8, '壁', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (9, 'ステロ', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (10, 'ねばねばネット', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (11, 'ヤケモン', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (12, '受け破壊', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (13, '積みアタッカー', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (14, '特定受け', '008000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (15, '追い風', '080000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (16, 'トリル', '080000');
+INSERT INTO public.pokemon_tags (id, name, color) VALUES (17, 'トリルアタッカー', '080000');
