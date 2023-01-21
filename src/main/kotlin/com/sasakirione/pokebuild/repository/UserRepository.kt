@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 
-class UserRepository: IUserRepository {
+class UserRepository : IUserRepository {
     override fun getSetting(authId: String): Setting {
         val userId = getUserIdFromAuthId(authId)
         val settingCount = UserSettings.select { UserSettings.userId eq userId }.count()
@@ -16,7 +16,8 @@ class UserRepository: IUserRepository {
             Setting(isUsedNickname = false)
         } else {
             val setting = UserSettings.select { UserSettings.userId eq userId }.toList()
-            val isUsedNicknameRaw = setting.filter{ resultRow ->  resultRow[UserSettings.settingId] == 1 }[0][UserSettings.settingValue]
+            val isUsedNicknameRaw =
+                setting.filter { resultRow -> resultRow[UserSettings.settingId] == 1 }[0][UserSettings.settingValue]
             val isUsedNickname = isUsedNicknameRaw == 1
             Setting(isUsedNickname = isUsedNickname)
         }

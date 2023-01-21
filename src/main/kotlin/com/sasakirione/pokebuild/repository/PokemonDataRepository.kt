@@ -1,7 +1,10 @@
 package com.sasakirione.pokebuild.repository
 
 import com.sasakirione.pokebuild.domain.Pokemon
-import com.sasakirione.pokebuild.entity.*
+import com.sasakirione.pokebuild.entity.PokemonMoveMap
+import com.sasakirione.pokebuild.entity.PokemonTypeMap
+import com.sasakirione.pokebuild.entity.Pokemons
+import com.sasakirione.pokebuild.entity.Types
 import com.sasakirione.pokebuild.plugins.MasterCache
 import org.jetbrains.exposed.sql.select
 
@@ -40,7 +43,8 @@ class PokemonDataRepository : IPokemonDataRepository {
 
     override fun getPokemonList(): List<Pair<Int, String>> = MasterCache.simplePokemons
     override fun getPokemonMove(pokemonId: Int): List<Int> {
-        val moveList = PokemonMoveMap.select { PokemonMoveMap.pokemon eq pokemonId }.map { it[PokemonMoveMap.move].value }
+        val moveList =
+            PokemonMoveMap.select { PokemonMoveMap.pokemon eq pokemonId }.map { it[PokemonMoveMap.move].value }
 
         return moveList.ifEmpty {
             listOf(0)
