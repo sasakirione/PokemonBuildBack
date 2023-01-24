@@ -13,13 +13,17 @@ class UserRepository : IUserRepository {
         val isUsedNicknameItem = getSettingItem(setting, 1)
         val isUsedNickname = isUsedNicknameItem == 1
 
-        return Setting(isUsedNickname = isUsedNickname)
+        val isDoubleBattle11Item = getSettingItem(setting, 2)
+        val isDoubleBattle1 = isDoubleBattle11Item == 1
+
+        return Setting(isUsedNickname = isUsedNickname, isDoubleBattle1 = isDoubleBattle1)
     }
 
     override fun setSetting(setting: Setting, authId: String) {
         val userId = getUserIdFromAuthId(authId)
         val settingList = UserSettings.select { UserSettings.userId eq userId }.toList()
-        setIsUsedNicknameSetting(settingList, userId, setting)
+        setBoolSetting(settingList, userId, setting.isUsedNickname, 1)
+        setBoolSetting(settingList, userId, setting.isDoubleBattle1, 2)
     }
 
     private fun getSettingItem(settingList: List<ResultRow>, settingId: Int): Int {
@@ -30,21 +34,22 @@ class UserRepository : IUserRepository {
         return target[0][UserSettings.settingValue]
     }
 
-    private fun setIsUsedNicknameSetting(
+    private fun setBoolSetting(
         settingList: List<ResultRow>,
         userId: Int,
-        setting: Setting
+        setting: Boolean,
+        settingId: Int
     ) {
-        val existIsUsedNickname = settingList.any { resultRow -> resultRow[UserSettings.settingId] == 1 }
-        if (!existIsUsedNickname) {
+        val existCurrentSetting = settingList.any { resultRow -> resultRow[UserSettings.settingId] == settingId }
+        if (!existCurrentSetting) {
             UserSettings.insert {
                 it[UserSettings.userId] = userId
-                it[settingId] = 1
-                it[settingValue] = if (setting.isUsedNickname) 1 else 0
+                it[UserSettings.settingId] = settingId
+                it[settingValue] = if (setting) 1 else 0
             }
         } else {
-            UserSettings.update({ UserSettings.userId eq userId and (UserSettings.settingId eq 1) }) {
-                it[settingValue] = if (setting.isUsedNickname) 1 else 0
+            UserSettings.update({ UserSettings.userId eq userId and (UserSettings.settingId eq settingId) }) {
+                it[settingValue] = if (setting) 1 else 0
             }
         }
     }
