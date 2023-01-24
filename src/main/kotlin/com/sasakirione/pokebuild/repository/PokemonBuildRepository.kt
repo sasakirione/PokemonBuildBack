@@ -167,7 +167,8 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         if (!exist) {
             throw IllegalArgumentException("Build not found")
         }
-        val moves = MasterCache.getMoveIdList(pokemon.moveList)
+        val moveListWithoutDefault = pokemon.moveList.filter { it != "選択なし" }
+        val moves = MasterCache.getMoveIdList(moveListWithoutDefault)
         val pokemonId = getIdFromInsertGrownPokemon(pokemon, moves, authId)
         PokemonBuildMap.insert {
             it[build] = buildId
@@ -202,10 +203,10 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         it[evS] = pokemon.ev[5]
         it[nature] = pokemon.nature
         it[ability] = MasterCache.getAbilityId(pokemon.ability)
-        it[move1] = moves[0]
-        it[move2] = moves[1]
-        it[move3] = moves[2]
-        it[move4] = moves[3]
+        it[move1] = moves.getOrNull(0)
+        it[move2] = moves.getOrNull(1)
+        it[move3] = moves.getOrNull(2)
+        it[move4] = moves.getOrNull(3)
         if (pokemon.good != "選択なし") {
             it[good] = MasterCache.getGoodId(pokemon.good)
         } else {
