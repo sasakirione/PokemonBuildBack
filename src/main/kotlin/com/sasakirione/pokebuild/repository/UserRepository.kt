@@ -10,9 +10,10 @@ class UserRepository : IUserRepository {
         val userId = getUserIdFromAuthId(authId)
         val setting = UserSettings.select { UserSettings.userId eq userId }.toList()
 
+        // ニックネーム使用設定
         val isUsedNicknameItem = getSettingItem(setting, 1)
         val isUsedNickname = isUsedNicknameItem == 1
-
+        // HP偶数警告の有無
         val isDoubleBattle11Item = getSettingItem(setting, 2)
         val isDoubleBattle1 = isDoubleBattle11Item == 1
 
@@ -22,7 +23,9 @@ class UserRepository : IUserRepository {
     override fun setSetting(setting: Setting, authId: String) {
         val userId = getUserIdFromAuthId(authId)
         val settingList = UserSettings.select { UserSettings.userId eq userId }.toList()
+        // ニックネーム使用設定
         setBoolSetting(settingList, userId, setting.isUsedNickname, 1)
+        // HP偶数警告の有無
         setBoolSetting(settingList, userId, setting.isDoubleBattle1, 2)
     }
 
