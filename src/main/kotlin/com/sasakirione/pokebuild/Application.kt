@@ -115,7 +115,8 @@ private fun dbMigration() = transaction {
 
 private fun setCache() = transaction {
     MasterCache.abilities = Abilities.selectAll().map { it[Abilities.id].value to it[Abilities.name] }.toList()
-    MasterCache.goods = Goods.innerJoin(GoodDetails).selectAll().map { Triple(it[Goods.id].value,it[Goods.name],it[GoodDetails.detail]) }.toList()
+    MasterCache.goods = Goods.innerJoin(GoodDetails).selectAll()
+        .map { Triple(it[Goods.id].value, it[Goods.name], it[GoodDetails.detail]) }.toList()
     MasterCache.moves = Moves.selectAll().map { it[Moves.id].value to it[Moves.name] }.toList()
     MasterCache.natures = Natures.selectAll().map { it[Natures.id].value to it[Natures.name] }.toList()
     MasterCache.tags = PokemonTags.selectAll().map { it[PokemonTags.id].value to it[PokemonTags.name] }.toList()

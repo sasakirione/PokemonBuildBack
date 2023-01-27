@@ -13,5 +13,6 @@ class UserController : KoinComponent {
 }
 
 data class Setting(
-    val isUsedNickname: Boolean
+    val isUsedNickname: Boolean,
+    val isDoubleBattle1: Boolean
 )
