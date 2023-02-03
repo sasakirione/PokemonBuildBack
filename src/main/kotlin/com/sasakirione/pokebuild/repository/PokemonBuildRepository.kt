@@ -7,6 +7,7 @@ import com.sasakirione.pokebuild.entity.*
 import com.sasakirione.pokebuild.entity.GrownPokemons.good
 import com.sasakirione.pokebuild.entity.TerastalMap.pokemonId
 import com.sasakirione.pokebuild.plugins.MasterCache
+import com.sasakirione.pokebuild.Logger.Companion.logger
 import io.ktor.server.plugins.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -114,57 +115,60 @@ class PokemonBuildRepository : IPokemonBuildRepository {
         PokemonBuildMap.deleteWhere { (build eq buildId) and (pokemon eq pokemonId) }
     }
 
-    private fun convertGrownPokemon(it: ResultRow) = GrownPokemon(
-        id = it[GrownPokemons.pokemon].value,
-        name = it[Pokemons.name] + " " + (it[Pokemons.formName] ?: ""),
-        personalId = it[GrownPokemons.id].value,
-        iv = listOf(
-            it[GrownPokemons.ivH],
-            it[GrownPokemons.ivA],
-            it[GrownPokemons.ivB],
-            it[GrownPokemons.ivC],
-            it[GrownPokemons.ivD],
-            it[GrownPokemons.ivS]
-        ),
-        ev = listOf(
-            it[GrownPokemons.evH],
-            it[GrownPokemons.evA],
-            it[GrownPokemons.evB],
-            it[GrownPokemons.evC],
-            it[GrownPokemons.evD],
-            it[GrownPokemons.evS]
-        ),
-        nature = it[GrownPokemons.nature].value,
-        ability = it[Abilities.name],
-        abilityList = MasterCache.getPokemonAbilities(it[Pokemons.id].value),
-        bv = listOf(
-            it[Pokemons.baseH],
-            it[Pokemons.baseA],
-            it[Pokemons.baseB],
-            it[Pokemons.baseC],
-            it[Pokemons.baseD],
-            it[Pokemons.baseS]
-        ),
-        moveList = MasterCache.getMoveNameList(
-            listOf(
-                it[GrownPokemons.move1]!!.value,
-                it[GrownPokemons.move2]!!.value,
-                it[GrownPokemons.move3]!!.value,
-                it[GrownPokemons.move4]!!.value
-            )
-        ),
-        good = it[Goods.name],
-        tag = PokemonTagMap.innerJoin(PokemonTags)
-            .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name] },
-        nickname = it[GrownPokemons.comment] ?: "",
-        terastal = TerastalMap.innerJoin(Types).select { pokemonId eq it[GrownPokemons.id].value }
-            .map { row -> row[Types.name] }.firstOrNull(),
-    )
+    private fun convertGrownPokemon(it: ResultRow): GrownPokemon {
+        logger.debug(it[Pokemons.name])
+        return GrownPokemon(
+            id = it[GrownPokemons.pokemon].value,
+            name = it[Pokemons.name] + " " + (it[Pokemons.formName] ?: ""),
+            personalId = it[GrownPokemons.id].value,
+            iv = listOf(
+                it[GrownPokemons.ivH],
+                it[GrownPokemons.ivA],
+                it[GrownPokemons.ivB],
+                it[GrownPokemons.ivC],
+                it[GrownPokemons.ivD],
+                it[GrownPokemons.ivS]
+            ),
+            ev = listOf(
+                it[GrownPokemons.evH],
+                it[GrownPokemons.evA],
+                it[GrownPokemons.evB],
+                it[GrownPokemons.evC],
+                it[GrownPokemons.evD],
+                it[GrownPokemons.evS]
+            ),
+            nature = it[GrownPokemons.nature].value,
+            ability = it[Abilities.name],
+            abilityList = MasterCache.getPokemonAbilities(it[Pokemons.id].value),
+            bv = listOf(
+                it[Pokemons.baseH],
+                it[Pokemons.baseA],
+                it[Pokemons.baseB],
+                it[Pokemons.baseC],
+                it[Pokemons.baseD],
+                it[Pokemons.baseS]
+            ),
+            moveList = MasterCache.getMoveNameList(
+                listOf(
+                    it[GrownPokemons.move1]!!.value,
+                    it[GrownPokemons.move2]!!.value,
+                    it[GrownPokemons.move3]!!.value,
+                    it[GrownPokemons.move4]!!.value
+                )
+            ),
+            good = it[Goods.name],
+            tag = PokemonTagMap.innerJoin(PokemonTags)
+                .select { PokemonTagMap.pokemon eq it[GrownPokemons.id].value }.map { row -> row[PokemonTags.name] },
+            nickname = it[GrownPokemons.comment] ?: "",
+            terastal = TerastalMap.innerJoin(Types).select { pokemonId eq it[GrownPokemons.id].value }
+                .map { row -> row[Types.name] }.firstOrNull(),
+        )}
 
     override fun insertPokemon(pokemon: GrownPokemon, buildId: Int, authId: String): Int {
         val exist = PokemonBuilds.innerJoin(Users).select { (Users.authId eq authId) and (PokemonBuilds.id eq buildId) }
             .count() > 0
         if (!exist) {
+            logger.error("存在しない構築にポケモンを追加しようとしています。構築ID: $buildId")
             throw IllegalArgumentException("Build not found")
         }
         val moveListWithoutDefault = pokemon.moveList.filter { it != "技の選択なし" }
@@ -227,6 +231,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             GrownPokemons.innerJoin(Users).select { (Users.authId eq authId) and (GrownPokemons.id eq pokemonId) }
                 .count() > 0
         if (!exist) {
+            logger.error("存在しない育成済みポケモンを更新しようとしています。ポケモンID: $pokemonId")
             throw IllegalArgumentException("指定の育成済みポケモンが存在しません！")
         }
     }
@@ -297,6 +302,7 @@ class PokemonBuildRepository : IPokemonBuildRepository {
 
     override fun deletePokemon(pokemonId: Int, authId: String) {
         checkGrownPokemon(authId, pokemonId)
+        logger.info("ポケモンを削除します。ポケモンID: $pokemonId")
         PokemonTagMap.deleteWhere { pokemon eq pokemonId }
         PokemonBuildMap.deleteWhere { pokemon eq pokemonId }
         GrownPokemons.deleteWhere { GrownPokemons.id eq pokemonId }
