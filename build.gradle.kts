@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.sasakirione"
-version = "0.4.3"
+version = "0.4.4"
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 
