@@ -29,7 +29,10 @@ object MasterCache {
         natures.first { it.second == natureName }.first
 
     fun getMoveNameList(moveIdList: List<Int>): List<String> =
-        moveIdList.map { moves.first { x -> x.first == it }.second }
+        moveIdList.map {
+            if ( it == 0 ) "設定なし" else
+            moves.first { x -> x.first == it }.second
+        }
 
     fun getTypeId(terastal: String): Int {
         return types.first { it.second == terastal }.first
