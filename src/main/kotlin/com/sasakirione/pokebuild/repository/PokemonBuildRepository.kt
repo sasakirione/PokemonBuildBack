@@ -150,10 +150,10 @@ class PokemonBuildRepository : IPokemonBuildRepository {
             ),
             moveList = MasterCache.getMoveNameList(
                 listOf(
-                    it[GrownPokemons.move1]!!.value,
-                    it[GrownPokemons.move2]!!.value,
-                    it[GrownPokemons.move3]!!.value,
-                    it[GrownPokemons.move4]!!.value
+                    it[GrownPokemons.move1]?.value ?: 0,
+                    it[GrownPokemons.move2]?.value ?: 0,
+                    it[GrownPokemons.move3]?.value ?: 0,
+                    it[GrownPokemons.move4]?.value ?: 0
                 )
             ),
             good = it[Goods.name],
