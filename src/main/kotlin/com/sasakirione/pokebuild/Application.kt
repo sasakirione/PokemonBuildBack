@@ -111,6 +111,8 @@ private fun dbMigration() = transaction {
     // v0.4.0
     SchemaUtils.create(TerastalMap)
     SchemaUtils.create(GoodDetails)
+    // v0.5.0
+    SchemaUtils.create(GrownPokemonMoves)
 }
 
 private fun setCache() = transaction {
